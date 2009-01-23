@@ -55,7 +55,7 @@
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', '/Volumes/Home/htdocs/cake/repo/branches/1.2.x.x');
+		define('CAKE_CORE_INCLUDE_PATH', ROOT);
 	}
 
 /**
