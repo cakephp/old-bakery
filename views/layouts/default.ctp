@@ -34,6 +34,7 @@
 		echo $html->meta('icon');
 
 		echo $html->css('cake.generic');
+		echo $html->css('menu.helper');
 
 		echo $scripts_for_layout;
 	?>
@@ -44,8 +45,11 @@
 			<h1><?php echo $html->link(__('CakePHP: the rapid development php framework', true), 'http://cakephp.org'); ?></h1>
 		</div>
 		<div id="content">
-
-			<?php $session->flash(); ?>
+      <?php    if (isset($menu)) {
+                    echo $menu->generate('context');
+                }
+                $session->flash(); 
+             ?>
 
 			<?php echo $content_for_layout; ?>
 

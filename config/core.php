@@ -38,7 +38,7 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	Configure::write('debug', 2);
+	Configure::write('debug', 1);
 /**
  * Application wide charset encoding
  */
@@ -64,7 +64,7 @@
  * 'admin' 		-> admin_index() and /admin/controller/index
  * 'superuser' -> superuser_index() and /superuser/controller/index
  */
-	//Configure::write('Routing.admin', 'admin');
+	Configure::write('Routing.admin', 'admin');
 
 /**
  * Turn off all caching application-wide.
@@ -148,7 +148,7 @@
 /**
  * A random string used in security hashing methods.
  */
-	Configure::write('Security.salt', 'f56c824dc376761bb74bfcfc6bf7bfd94372b4cc');
+	Configure::write('Security.salt', 'fedaacf6b65130c801dd9caf2f647eb6f9fd8fbd');
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
