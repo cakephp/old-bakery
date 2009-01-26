@@ -5,7 +5,6 @@ class DummyTable extends DummyAppModel {
 	public $displayField = 'name';
 	public $primaryKey = 'name';
 	public $databaseName = '';
-	public $useTable = false;
 	public $useDbConfig = 'dummy';
 	
 	public $hasMany = array(

@@ -6,7 +6,6 @@ class DummyField extends DummyAppModel {
 	public $actsAs = array('Dummy.DummyData');
 	
 	public $useDbConfig = 'dummy';
-	public $useTable = false;
 	public $belongsTo = array(
 			'DummyTable' => array(
 					'className' => 'Dummy.DummyTable', 
