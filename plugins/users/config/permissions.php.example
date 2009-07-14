@@ -1,0 +1,19 @@
+<?php
+App::import('Model', 'Users.Group');
+$config['App']['permissions'] = array(
+    'Articles' => array(
+        'view'          => Group::GUEST,
+        'add'           => Group::MEMBER,
+        'edit'          => Group::MODERATOR,
+        'delete'        => Group::COREDEV,
+        'feature'       => Group::MODERATOR
+    ),
+    'Comments' => array(
+        'add'           => Group::MEMBER,
+        'move'          => Group::MODERATOR
+    ),
+    'DebugKit.ToolbarAccess' => array(
+        'history_state' => Group::GUEST
+    )
+);
+?>
