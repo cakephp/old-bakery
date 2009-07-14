@@ -92,7 +92,6 @@ class AccessComponent extends Object {
 		
 		$this->__loadPermissions();
 		$this->__configureAuth();
-		
 	}
 	
 /**
@@ -122,6 +121,25 @@ class AccessComponent extends Object {
 			}
 		}
 		return $data;
+	}
+	
+/**
+ * Method to login a user on demand. Only available in debug mode.
+ *
+ * @param string $username The username of the user to login.
+ * @return boolean Whether the user was found and logged in.
+ * @access public
+ */ 
+	public function lazyLogin($username) {
+		if ((Configure::read('debug') > 0) && (!$this->__controller->Auth->user())) {
+			return $this->__controller->Auth->login(ClassRegistry::init($this->__controller->Auth->userModel)->find('first', array(
+				'conditions' => array(
+					$this->__controller->Auth->fields['username'] => $username
+				),
+				'recursive' => -1
+			)));
+		}
+		return false;
 	}
 	
 /**

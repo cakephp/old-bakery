@@ -13,6 +13,9 @@ class AccessComponentTestCase extends CakeTestCase {
 
 	private $Controller = null;
 	private $config = 'test_suite_permissions.php';
+	
+	public $fixtures = array('plugin.users.user', 'plugin.users.group');
+	
 		
 	public function startCase() {
 		$testfile = APP . 'plugins' . DS . 'users' . DS . 'tests' . DS . 'files' . DS . 'permissions.php.test';
@@ -29,7 +32,6 @@ class AccessComponentTestCase extends CakeTestCase {
 		$this->Controller->constructClasses();
 		$this->Controller->beforeFilter();
 		$this->Controller->params = Router::parse('/');
-		
 		$this->Controller->Session->delete('Auth.User');
 		$this->Controller->Access->initialize($this->Controller);
 	}
@@ -225,6 +227,38 @@ class AccessComponentTestCase extends CakeTestCase {
 		$result = $this->Controller->Access->hashPasswords($data);
 		$this->assertEqual($expected, $result);
 		
+	}
+	
+	public function testLazyLoginInDebugMode() {
+		Configure::write('debug', 1);
+		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		$this->Controller->Access->lazyLogin('Phally');
+		
+		$this->assertEqual($this->Controller->Auth->user('id'), 1);
+		$this->assertEqual($this->Controller->Auth->user('username'), 'Phally');
+		$this->assertEqual($this->Controller->Auth->user('group_id'), 100);
+	}
+	
+	public function testLazyLoginInProductionMode() {
+		Configure::write('debug', 0);
+		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		$this->Controller->Access->lazyLogin('Phally');
+		
+		$this->assertNull($this->Controller->Auth->user());
+	}
+	
+	public function testLazyLoginWithSignedInUser() {
+		Configure::write('debug', 1);
+		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		
+		$user = ClassRegistry::init('Users.User')->find('first', array('conditions' => array('username' => 'coredev')));
+		$this->Controller->Auth->login($user);
+		
+		$this->Controller->Access->lazyLogin('Phally');
+		
+		$this->assertEqual($this->Controller->Auth->user('id'), 3);
+		$this->assertEqual($this->Controller->Auth->user('username'), 'coredev');
+		$this->assertEqual($this->Controller->Auth->user('group_id'), 80);
 	}
 	
 	

@@ -36,5 +36,10 @@
  */
 class AppController extends Controller {
 	public $components = array('Auth', 'Users.Access');
+	
+	public function beforeFilter() {
+		$this->Access->salt = false;
+		$this->Auth->fields = array('username' => 'username', 'password' => 'psword');
+	}
 }
 ?>
