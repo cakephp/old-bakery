@@ -35,6 +35,11 @@
  * @subpackage    cake.app
  */
 class AppController extends Controller {
-	public $helpers = array('Html','Form','Menu');
+	public $components = array('Auth', 'Users.Access');
+	
+	public function beforeFilter() {
+		$this->Access->salt = false;
+		$this->Auth->fields = array('username' => 'username', 'password' => 'psword');
+	}
 }
 ?>
