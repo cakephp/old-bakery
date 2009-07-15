@@ -104,7 +104,7 @@ class DATABASE_CONFIG {
 	/**
 	 *  Used by usersplugin
 	 */
-	var $users = array(
+	var $user_plug = array(
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',
