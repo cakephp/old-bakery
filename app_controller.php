@@ -36,10 +36,13 @@
  */
 class AppController extends Controller {
 	public $components = array('Auth', 'Users.Access');
+	public $helpers = array('Menu');
 	
 	public function beforeFilter() {
 		$this->Access->salt = false;
 		$this->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		$this->Auth->loginAction = array('plugin'=>'users','controller' => 'users','action'=>'login','admin' => false);
+		$this->Auth->enabled = false;
 	}
 }
 ?>
