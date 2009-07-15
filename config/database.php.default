@@ -88,6 +88,9 @@ class DATABASE_CONFIG {
 		'prefix' => '',
 	);
 
+	/**
+	 *  Used by dummy plugin
+	 */
 	var $dummy = array(
 		'driver' => 'mysql',
 		'persistent' => false,
@@ -96,6 +99,19 @@ class DATABASE_CONFIG {
 		'password' => '',
 		'database' => 'bakery',
 		'prefix' => 'dum_',
+	);
+
+	/**
+	 *  Used by usersplugin
+	 */
+	var $users = array(
+		'driver' => 'mysql',
+		'persistent' => false,
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => '',
+		'database' => 'bakery',
+		'prefix' => 'user_plug_',
 	);
 
 }

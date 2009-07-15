@@ -1,5 +1,6 @@
 <?php
 class Group extends UsersAppModel {
+	public $useDbConfig = 'user_plug';
 
 	const GUESTS = 0;
 	const USERS = 10;
