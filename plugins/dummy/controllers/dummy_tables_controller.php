@@ -1,5 +1,5 @@
 <?php
-class DummyTablesController extends AppController {
+class DummyTablesController extends DummyAppController {
 	public $name = 'DummyTables';	
 	
 	function admin_index() {
