@@ -27,7 +27,7 @@
 <head>
 	<?php echo $html->charset(); ?>
 	<title>
-		<?php __('CakePHP: the rapid development php framework:'); ?>
+		<?php __('Bakery 2.0:'); ?>
 		<?php echo $title_for_layout; ?>
 	</title>
 	<?php
@@ -42,7 +42,7 @@
 <body>
 	<div id="container">
 		<div id="header">
-			<h1><?php echo $html->link(__('CakePHP: the rapid development php framework', true), '/'); ?></h1>
+			<h1><?php echo $html->link(__('Baker 2.0', true), '/'); ?></h1>
 		</div>
 		<div id="content">
       <?php    if (isset($menu)) {
