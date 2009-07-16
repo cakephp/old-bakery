@@ -17,6 +17,7 @@
 		//	'published_date',
 		//	'deleted',
 		//	'deleted_date',
+		'tags',
 		'Intro.content'
 	));
     echo $form->end('Submit');?>

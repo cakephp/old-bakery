@@ -16,5 +16,8 @@ foreach ($categories as $category) {
 }
 
 	echo $menu->generate('cats');
+
+	$menu->add('context',array(__('Articles', true), array('controller'=> 'articles', 'action'=>'index')));
+	$menu->add('context',array(__('Tags', true), array('controller'=> 'tags', 'action'=>'index')));
 ?>
 </div>
