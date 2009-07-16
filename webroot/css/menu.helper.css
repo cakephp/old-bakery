@@ -1,16 +1,11 @@
 @CHARSET "ISO-8859-1";
-ul.menu_main {
-
-}
-
-ul.menu_main li {
+.menu_main li {
     list-style: none;
 }
-
-ul.menu_context {
-	
+.menu_context li{
+	display: inline;
 }
 
-ul.menu_context li{
-	display: inline;
+.menu_cats li {
+    list-style: none;
 }
