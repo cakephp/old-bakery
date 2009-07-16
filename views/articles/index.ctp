@@ -78,9 +78,8 @@ foreach ($articles as $article):
 </div>
 <?php
 	$menu->add('context',array(__('New Article', true), array('action'=>'add')));
-	$menu->add('context',array(__('List Articles', true), array('controller'=> 'articles', 'action'=>'index')));
-	$menu->add('context',array(__('List Categories', true), array('controller'=> 'categories', 'action'=>'index')));
-	$menu->add('context',array(__('List Users', true), array('controller'=> 'users', 'action'=>'index')));
-	$menu->add('context',array(__('List Article Pages', true), array('controller'=> 'article_pages', 'action'=>'index')));
+	$menu->add('context',array(__('Categories', true), array('controller'=> 'categories', 'action'=>'index')));
+	$menu->add('context',array(__('Tags', true), array('controller'=> 'tags', 'action'=>'index')));
+	$menu->add('context',array(__('Article Pages', true), array('controller'=> 'article_pages', 'action'=>'index')));
 ?>
 

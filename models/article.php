@@ -49,25 +49,25 @@ class Article extends AppModel {
 	//	'Comment',
 	//	'Rating'
 	);
-/**
- *  Coderip from 2.0.x.x branch
- *
- *
 	public $hasAndBelongsToMany = array('Tag');
 
-	public function beforeSave($options = array()) {
-		if (isset($this->data[$this->alias]['tags'])) {
-			$tagIds = $this->Tag->saveArticleTags($this->data[$this->alias]['tags']);
-			unset($this->data[$this->alias]['tags']);
-			$this->data[$this->Tag->alias][$this->Tag->alias] = $tagIds;
-		}
-	}
- */
 
 	public function beforeSave($options = array()) {
 		if (isset($this->data[$this->alias]['title']) && !isset($this->data[$this->alias][$this->primaryKey])) {
 			$this->data[$this->alias]['slug'] = Inflector::slug($this->data[$this->alias]['title']);
 		}
+/*
+		if (isset($this->data[$this->alias]['tags']) && !empty($this->data[$this->alias]['tags'])) {
+			$tagIds = $this->Tag->saveArticleTags($this->data[$this->alias]['tags']);
+			unset($this->data[$this->alias]['tags']);
+			$this->set($this->Tag->alias,$tagIds);
+		}
+*/
+		if (isset($this->data[$this->alias]['published']) && $this->data[$this->alias]['published'])
+			$this->set('published_date', date('Y-m-d H:i:s'));
+
+		if (isset($this->data[$this->alias]['deleted']) && $this->data[$this->alias]['deleted'])
+			$this->set('deleted_date', date('Y-m-d H:i:s'));
 
 		return true;
 	}
