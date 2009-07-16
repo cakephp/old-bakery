@@ -33,6 +33,7 @@ class ArticlesController extends AppController {
 			if ($this->Article->validates() && $this->Article->Intro->validates()) {
 				$this->Article->save(null,false);
 				$this->Article->Intro->set('article_id',$this->Article->id);
+				$this->Article->Intro->set('pagenum',0);
 				$this->Article->Intro->save(null,false);
 
 				$this->Session->write('Article',$this->Article->id);

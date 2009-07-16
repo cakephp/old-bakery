@@ -53,6 +53,6 @@ foreach ($articlePages as $articlePage):
 	<?php echo $paginator->next(__('next', true).' >>', array(), null, array('class'=>'disabled'));?>
 </div>
 <?php
-	$menu->add('context',array(__('New ArticlePage', true), array('action'=>'add')));
+	$menu->add('context',array(__('Articles', true), array('controller'=>'articles', 'action'=>'index')));
 ?>
 

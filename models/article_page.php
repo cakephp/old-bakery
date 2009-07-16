@@ -17,7 +17,7 @@ class ArticlePage extends AppModel {
 
 	public function create($data = array()) {
 		if (isset($data[$this->alias])) {
-			if (!isset($data[$this->alias]['pagenum'])) {
+			if (!isset($data[$this->alias]['pagenum']) && isset($data[$this->alias]['article_id'])) {
 				$this->Article->id = $data[$this->alias]['article_id'];
 				$data[$this->alias]['pagenum'] = $this->Article->field('article_page_count')+1;
 			}
