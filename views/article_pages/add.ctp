@@ -3,7 +3,6 @@
     echo $form->create('ArticlePage');
     echo $form->inputs(array('fieldset' => false,
 			'title',
-			'pagenum' => array('type' => 'hidden'),
 			'content',
 	));
     echo $form->end('Submit');?>

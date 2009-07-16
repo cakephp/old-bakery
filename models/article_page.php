@@ -9,13 +9,22 @@ class ArticlePage extends AppModel {
 
 	public $belongsTo = array(
 		'Article' => array(
-			'className' => 'Article',
-			'foreignKey' => 'article_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
+			'counterCache' => true,
+			'counterScope' => array('pagenum !=' => 0),
+			'fields' => array('id','title','slug')
 		)
 	);
 
+	public function create($data = array()) {
+		if (isset($data[$this->alias])) {
+			if (!isset($data[$this->alias]['pagenum'])) {
+				$this->Article->id = $data[$this->alias]['article_id'];
+				$data[$this->alias]['pagenum'] = $this->Article->field('article_page_count')+1;
+			}
+		} else {
+			// if alias level is not used
+		}
+		return parent::create($data);
+	}
 }
 ?>

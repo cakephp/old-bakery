@@ -33,6 +33,7 @@ class ArticlesController extends AppController {
 			$this->Session->setFlash(__('Invalid Article.', true));
 			$this->redirect(array('action'=>'index'));
 		}
+		$this->Session->write('Article',$id);
 		$this->set('article', $this->Article->read(null, $id));
 	}
 

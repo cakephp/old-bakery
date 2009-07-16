@@ -19,16 +19,14 @@ class ArticlePagesController extends AppController {
 
 	function add() {
 		if (!empty($this->data)) {
+			$this->data['ArticlePage']['article_id'] = $this->Session->read('Article');
 			$this->ArticlePage->create($this->data);
-			$this->ArticlePage->set('article_id', $this->Session->read('Article'));
 			if ($this->ArticlePage->save()) {
 				$this->Session->setFlash(__('The ArticlePage has been saved', true));
 				$this->redirect(array('controller'=>'articles','action'=>'index'));
 			} else {
 				$this->Session->setFlash(__('The ArticlePage could not be saved. Please, try again.', true));
 			}
-		} else {
-			$this->data['ArticlePage']['pagenum'] = $this->params['named']['page'];
 		}
 		$articles = $this->ArticlePage->Article->find('list');
 		$this->set(compact('articles'));
