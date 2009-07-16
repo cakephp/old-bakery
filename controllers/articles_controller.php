@@ -5,7 +5,26 @@ class ArticlesController extends AppController {
 	var $helpers = array('Html', 'Form');
 
 	function index() {
+		$this->paginate['conditions'] = array(
+	//		'Article.published' => true,
+			'Article.deleted' => false
+		);
+		/*
+		$this->paginate['fields'] = array(
+			'id','parent_id','user_id','category_id',
+			'slug','lang','title','rate_count','rate_sum','viewed',
+			'comment_count','article_page_count',
+			'published_date','modified'
+		);
+		
+		$this->paginate['contain'] = array(
+		//	'User' => array('id','username'),
+			'Intro' => array('id','content'),
+			'Category' => array('id','name'),
+			'Parent' => array('id','title','slug')
+		);*/
 		$this->Article->recursive = 0;
+		
 		$this->set('articles', $this->paginate());
 	}
 

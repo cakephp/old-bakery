@@ -8,27 +8,20 @@ echo $paginator->counter(array(
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
-	<th><?php echo $paginator->sort('id');?></th>
+	<th><?php echo $paginator->sort('title');?></th>
 	<th><?php echo $paginator->sort('parent_id');?></th>
+	<th><?php __('Intro text');?></th>
 	<th><?php echo $paginator->sort('lang');?></th>
-	<th><?php echo $paginator->sort('slug');?></th>
 	<th><?php echo $paginator->sort('category_id');?></th>
 	<th><?php echo $paginator->sort('user_id');?></th>
-	<th><?php echo $paginator->sort('rate_count');?></th>
-	<th><?php echo $paginator->sort('rate_sum');?></th>
+	<th><?php echo $paginator->sort(__('Rated',true),'rate_sum');?></th>
 	<th><?php echo $paginator->sort('viewed');?></th>
-	<th><?php echo $paginator->sort('title');?></th>
-	<th><?php echo $paginator->sort('comment_count');?></th>
-	<th><?php echo $paginator->sort('article_page_count');?></th>
-	<th><?php echo $paginator->sort('published');?></th>
-	<th><?php echo $paginator->sort('published_date');?></th>
-	<th><?php echo $paginator->sort('deleted');?></th>
-	<th><?php echo $paginator->sort('deleted_date');?></th>
-	<th><?php echo $paginator->sort('created');?></th>
-	<th><?php echo $paginator->sort('modified');?></th>
+	<th><?php echo $paginator->sort(__('Comments',true),'comment_count');?></th>
+	<th><?php echo $paginator->sort(__('Pages',true),'article_page_count');?></th>
+	<th><?php echo $paginator->sort(__('Publised',true),'published_date');?></th>
 	<th class="actions"><?php __('Actions');?></th>
 </tr>
-<?php
+<?php 
 $i = 1;
 foreach ($articles as $article):
 	$class = null;
@@ -38,34 +31,28 @@ foreach ($articles as $article):
 ?>
 	<tr<?php echo $class;?>>
 		<td>
-			<?php echo $article['Article']['id']; ?>
+			<?php echo $html->link($article['Article']['title'], array('action'=>'view', $article['Article']['id'],$article['Article']['slug'])); ?>
 		</td>
 		<td>
 			<?php echo $html->link($article['Parent']['title'], array('controller'=> 'articles', 'action'=>'view', $article['Parent']['id'])); ?>
 		</td>
 		<td>
-			<?php echo $article['Article']['lang']; ?>
+			<?php echo $article['Intro']['content']; ?>
 		</td>
 		<td>
-			<?php echo $article['Article']['slug']; ?>
+			<?php echo $article['Article']['lang']; ?>
 		</td>
 		<td>
 			<?php echo $html->link($article['Category']['name'], array('controller'=> 'categories', 'action'=>'view', $article['Category']['id'])); ?>
 		</td>
 		<td>
-			<?php echo $html->link($article['User']['id'], array('controller'=> 'users', 'action'=>'view', $article['User']['id'])); ?>
+			<?php echo $html->link($article['User']['username'], array('controller'=> 'users', 'action'=>'view', $article['User']['id'])); ?>
 		</td>
 		<td>
-			<?php echo $article['Article']['rate_count']; ?>
-		</td>
-		<td>
-			<?php echo $article['Article']['rate_sum']; ?>
+			<?php echo $article['Article']['rate_count']; echo $article['Article']['rate_sum']; ?>
 		</td>
 		<td>
 			<?php echo $article['Article']['viewed']; ?>
-		</td>
-		<td>
-			<?php echo $html->link($article['Article']['title'], array('action'=>'view', $article['Article']['id'])); ?>
 		</td>
 		<td>
 			<?php echo $article['Article']['comment_count']; ?>
@@ -74,22 +61,7 @@ foreach ($articles as $article):
 			<?php echo $article['Article']['article_page_count']; ?>
 		</td>
 		<td>
-			<?php echo $article['Article']['published']; ?>
-		</td>
-		<td>
-			<?php echo $article['Article']['published_date']; ?>
-		</td>
-		<td>
-			<?php echo $article['Article']['deleted']; ?>
-		</td>
-		<td>
-			<?php echo $article['Article']['deleted_date']; ?>
-		</td>
-		<td>
-			<?php echo $article['Article']['created']; ?>
-		</td>
-		<td>
-			<?php echo $article['Article']['modified']; ?>
+			<?php echo ($article['Article']['published_date'])? $article['Article']['published_date'] : __('Unpublished',true); ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('Edit', true), array('action'=>'edit', $article['Article']['id'])); ?>

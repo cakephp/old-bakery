@@ -23,7 +23,7 @@ class ArticlePagesController extends AppController {
 			$this->ArticlePage->set('article_id', $this->Session->read('Article'));
 			if ($this->ArticlePage->save()) {
 				$this->Session->setFlash(__('The ArticlePage has been saved', true));
-				$this->redirect(array('action'=>'index'));
+				$this->redirect(array('controller'=>'articles','action'=>'index'));
 			} else {
 				$this->Session->setFlash(__('The ArticlePage could not be saved. Please, try again.', true));
 			}

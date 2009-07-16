@@ -2,7 +2,7 @@
 <?php
     echo $form->create('Article');
     echo $form->inputs(array('fieldset' => false,
-			'parent_id',
+			'parent_id' => array('empty' => __('Opiontally select parent article',true)),
 		//	'lang',
 		//	'slug',
 			'category_id',

@@ -22,120 +22,54 @@ class Article extends AppModel {
 		'Parent' => array(
 			'className' => 'Article',
 			'foreignKey' => 'parent_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
+			'fields' => array('id','title','slug')
 		),
 		'Category' => array(
-			'className' => 'Category',
-			'foreignKey' => 'category_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
+			'fields' => array('id','name')
 		),
 		'User' => array(
 			'className' => 'Users.User',
-			'foreignKey' => 'user_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
+			'fields' => array('id','username')
 		)
 	);
-
-	var $hasOne = array(
+	
+	public $hasOne = array(
 		'Intro' => array(
 			'className' => 'ArticlePage',
 			'foreignKey' => 'article_id',
 			'dependent' => true,
 			'conditions' => array('pagenum' => 0),
+			'fields' => array('id','content')
 		)
 	);
 
-	var $hasMany = array(
-		'ArticlePage' => array(
-			'className' => 'ArticlePage',
-			'foreignKey' => 'article_id',
-			'dependent' => true,
-			'conditions' => array('pagenum !=' => 0),
-			'fields' => '',
-			'order' => 'pagenum',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		),
-	/**	'Attachment' => array(
-			'className' => 'Attachment',
-			'foreignKey' => 'article_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		),
-		'Comment' => array(
-			'className' => 'Comment',
-			'foreignKey' => 'article_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		),
-		'Featured' => array(
-			'className' => 'Featured',
-			'foreignKey' => 'article_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		),
-		'Rating' => array(
-			'className' => 'Rating',
-			'foreignKey' => 'article_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		)*/
+	public $hasMany = array(
+		'ArticlePage' => array('conditions' => array('pagenum !=' => 0))
+	//	'Attachment',
+	//	'Comment',
+	//	'Rating'
 	);
-/*
-	var $hasAndBelongsToMany = array(
-		'Tag' => array(
-			'className' => 'Tag',
-			'joinTable' => 'articles_tags',
-			'foreignKey' => 'article_id',
-			'associationForeignKey' => 'tag_id',
-			'unique' => true,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'finderQuery' => '',
-			'deleteQuery' => '',
-			'insertQuery' => ''
-		)
-	);
-*/
+/**
+ *  Coderip from 2.0.x.x branch
+ *
+ *
+	public $hasAndBelongsToMany = array('Tag');
+
+	public function beforeSave($options = array()) {
+		if (isset($this->data[$this->alias]['tags'])) {
+			$tagIds = $this->Tag->saveArticleTags($this->data[$this->alias]['tags']);
+			unset($this->data[$this->alias]['tags']);
+			$this->data[$this->Tag->alias][$this->Tag->alias] = $tagIds;
+		}
+	}
+ */
+
+	public function beforeSave($options = array()) {
+		if (isset($this->data[$this->alias]['title']) && !isset($this->data[$this->alias][$this->primaryKey])) {
+			$this->data[$this->alias]['slug'] = Inflector::slug($this->data[$this->alias]['title']);
+		}
+
+		return true;
+	}
 }
 ?>
