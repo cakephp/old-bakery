@@ -1,11 +1,13 @@
 <div class="articles view">
 <h2><?php echo $article['Article']['title']; ?></h2>
 	<dl>
-		<dt><?php __('Parent'); ?></dt>
+		<?php if (!empty($article['Parent']['title'])) : ?>
+		<dt><?php __('Original Article'); ?></dt>
 		<dd>
 			<?php echo $html->link($article['Parent']['title'], array('controller'=> 'articles', 'action'=>'view', $article['Parent']['id'])); ?>
 			&nbsp;
 		</dd>
+		<?php endif; ?>
 		<dt><?php __('Lang'); ?></dt>
 		<dd>
 			<?php echo $article['Article']['lang']; ?>
@@ -36,20 +38,26 @@
 			<?php echo $article['Article']['comment_count']; ?>
 			&nbsp;
 		</dd>
-		<dt><?php __('Article Pages'); ?></dt>
+		<dt><?php __('Pages'); ?></dt>
 		<dd>
 			<?php echo $article['Article']['article_page_count']; ?>
 			&nbsp;
 		</dd>
 		<dt><?php __('Published'); ?></dt>
-		<dd>
-			<?php echo $article['Article']['published']; ?>
-			&nbsp;
+		<dd><?php
+			if ($article['Article']['published'])
+				echo $article['Article']['published_date'];
+			else 
+				__('Unpublished');
+		?> &nbsp;
 		</dd>
-		<dt><?php __('Published Date'); ?></dt>
-		<dd>
-			<?php echo $article['Article']['published_date']; ?>
-			&nbsp;
+		<dt><?php __('Tags'); ?></dt>
+		<dd><?php $tags = '';
+			foreach ($article['Tag'] as $tag) {
+				$tags .= $tag['name'].', ';
+			}
+			echo substr($tags, 0, -2);
+		?>	&nbsp;
 		</dd>
 		<dt><?php __('Intro'); ?></dt>
 		<dd>

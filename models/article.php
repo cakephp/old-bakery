@@ -50,7 +50,9 @@ class Article extends AppModel {
 	//	'Rating'
 	);
 	
-	public $hasAndBelongsToMany = array('Tag');
+	public $hasAndBelongsToMany = array('Tag' => array(
+		'fields' => array('id','name')
+	));
 
 	public function beforeSave($options = array()) {
 		if (isset($this->data[$this->alias]['title']) && !isset($this->data[$this->alias][$this->primaryKey])) {
