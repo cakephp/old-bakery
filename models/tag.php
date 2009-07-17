@@ -6,7 +6,9 @@ class Tag extends AppModel {
 	public $hasAndBelongsToMany = array('Article');
 
 	public function create($data = array(), $filterKey = false) {
-		if (isset($data['name'])) {
+		if (isset($data[$this->alias]) && isset($data[$this->alias]['name'])) {
+			$data[$this->alias]['keyname'] = Inflector::slug($data[$this->alias]['name']);
+		} elseif ($data['name']) {
 			$data['keyname'] = Inflector::slug($data['name']);
 		}
 		return parent::create($data,$filterKey);
@@ -19,6 +21,7 @@ class Tag extends AppModel {
 	 * @return array idlist of arrays array(id1 => name1, id2 => name2)
 	 */
 	public function saveArticleTags($commalist = '') {
+		if ($commalist == '') return null;
 		$tags = explode(',',$commalist);
 		if (empty($tags)) return null;
 		$existing = $this->find('all', array(
