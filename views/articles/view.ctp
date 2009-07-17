@@ -18,7 +18,7 @@
 		</dd>
 		<dt><?php __('User'); ?></dt>
 		<dd>
-			<?php echo $html->link($article['User']['id'], array('controller'=> 'users', 'action'=>'view', $article['User']['id'])); ?>
+			<?php echo $html->link($article['User']['username'], array('controller'=> 'users', 'action'=>'view', $article['User']['id'])); ?>
 			&nbsp;
 		</dd>
 		<dt><?php __('Rated'); ?></dt>
