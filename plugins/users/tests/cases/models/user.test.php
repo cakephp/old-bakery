@@ -13,6 +13,10 @@ class UserModelTestCase extends CakeTestCase {
 		$this->assertIsA($this->User, 'User');
 	}
 	
+	public function testDisplayField() {
+		$this->AssertEqual($this->User->displayField, 'username');
+	}
+	
 	public function testAttachedBehaviors() {
 		$this->assertTrue(in_array('Containable', $this->User->actsAs));
 	}
