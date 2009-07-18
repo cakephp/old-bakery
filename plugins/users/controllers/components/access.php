@@ -82,6 +82,14 @@ class AccessComponent extends Object {
  */ 
 	public $rememberField = 'remember';
 	
+/** 
+ * Parameters from the controller.
+ *
+ * @var array
+ * @access public
+ */ 
+	public $params = array();
+	
 /**
  * List of permissions from the config file.
  *
@@ -91,12 +99,12 @@ class AccessComponent extends Object {
 	private $__permissions = array();
 	
 /**
- * Reference to the current controller.
+ * Reference to the AuthComponent.
  *
  * @var object
  * @access private
  */ 
-	private $__controller = null;
+	private $__auth = null;
 	
 /**
  * Callback method to initialize the AccessComponent.
@@ -112,7 +120,8 @@ class AccessComponent extends Object {
 		
 		$controller->helpers[] = 'Users.Auth';
 		
-		$this->__controller = $controller;
+		$this->__auth = $controller->Auth;
+		$this->params = &$controller->params;
 		
 		$this->__loadPermissions();
 		$this->__configureAuth();
@@ -127,8 +136,26 @@ class AccessComponent extends Object {
  * @return boolean Whether the user has access or not.
  * @access public
  */ 
-	public function isAuthorized() {
-		return $this->__check($this->__controller->Auth->user($this->group)); 
+	public function isAuthorized($group = null, $strict = false) {
+		if (!$group) {
+			$group = $this->__auth->user($this->group);
+		}
+		
+		$controller = Inflector::camelize($this->params['controller']);
+		if (!empty($this->params['plugin'])) {
+			$controller = Inflector::camelize($this->params['plugin']) . '.' . $controller;
+		}
+		$action = $this->params['action'];
+		
+		if (isset($this->__permissions[$controller][$action])) {
+			if ($strict) {
+				return ($group == $this->__permissions[$controller][$action]);
+			} else {
+				return ($group >= $this->__permissions[$controller][$action]);
+			}
+		}
+		
+		return false;
 	}
 
 /**
@@ -140,7 +167,7 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function hashPasswords($data) {
-		$auth = $this->__controller->Auth;
+		$auth = $this->__auth;
 		if (is_array($data) && isset($data[$auth->userModel])) {
 			if (isset($data[$auth->userModel][$auth->fields['username']]) && isset($data[$auth->userModel][$auth->fields['password']])) {
 				$data[$auth->userModel][$auth->fields['password']] = Security::hash($data[$auth->userModel][$auth->fields['password']], null, $this->salt);
@@ -157,10 +184,10 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function lazyLogin($username) {
-		if ((Configure::read('debug') > 0) && (!$this->__controller->Auth->user())) {
-			return $this->__controller->Auth->login(ClassRegistry::init($this->__controller->Auth->userModel)->find('first', array(
+		if ((Configure::read('debug') > 0) && (!$this->__auth->user())) {
+			return $this->__auth->login(ClassRegistry::init($this->__auth->userModel)->find('first', array(
 				'conditions' => array(
-					$this->__controller->Auth->fields['username'] => $username
+					$this->__auth->fields['username'] => $username
 				),
 				'recursive' => -1
 			)));
@@ -175,9 +202,9 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function cookieLogin() {
-		if (!$this->__controller->Auth->user()) {
+		if (!$this->__auth->user()) {
 			if ($data = $this->getRememberCookie()) {
-				return $this->__controller->Auth->login($data);
+				return $this->__auth->login($data);
 			}
 		}
 		return false;
@@ -190,10 +217,10 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function setRememberCookie($data) {
-		if ($this->__controller->Auth->user() && $data[$this->__controller->Auth->userModel][$this->rememberField]) {
+		if ($this->__auth->user() && $data[$this->__auth->userModel][$this->rememberField]) {
 			$this->Cookie->write(
-				$this->__controller->Auth->sessionKey,
-				array_intersect_key($data[$this->__controller->Auth->userModel], array_flip($this->__controller->Auth->fields)), 
+				$this->__auth->sessionKey,
+				array_intersect_key($data[$this->__auth->userModel], array_flip($this->__auth->fields)), 
 				true, 
 				$this->remember
 			);
@@ -208,7 +235,7 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function getRememberCookie() {
-		return $this->Cookie->read($this->__controller->Auth->sessionKey);
+		return $this->Cookie->read($this->__auth->sessionKey);
 	}
 	
 /**
@@ -217,7 +244,7 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function deleteRememberCookie() {
-		$this->Cookie->del($this->__controller->Auth->sessionKey);
+		$this->Cookie->del($this->__auth->sessionKey);
 	}
 	
 /**
@@ -230,7 +257,7 @@ class AccessComponent extends Object {
  * @access private
  */ 
 	private function __configureAuth() {
-		$auth = $this->__controller->Auth;
+		$auth = $this->__auth;
 		$auth->authorize = 'object';
 		$auth->object = $auth->authenticate = $this;
 		
@@ -238,38 +265,11 @@ class AccessComponent extends Object {
 			$auth->authError = __('You need to login first.', true);
 		}
 		
-		if ($this->__check($this->guest, true)) {
-			$auth->allow($this->__controller->action);
+		if ($this->isAuthorized($this->guest, true)) {
+			$auth->allow($this->params['action']);
 		}
 	}
-	
-/**
- * Method to check the permission for a current location for a given 
- * usergroup.
- *
- * @param integer $group Group ID to check for.
- * @param boolean $strict Strict mode checks for the exact group, else it checks for the exact group or higher.
- * @return boolean Whether the usergroup has access to the current location.
- * @access private
- */ 
-	private function __check($group, $strict = false) {
-		$controller = Inflector::camelize($this->__controller->params['controller']);
-		if (!empty($this->__controller->params['plugin'])) {
-			$controller = Inflector::camelize($this->__controller->params['plugin']) . '.' . $controller;
-		}
-		$action = $this->__controller->params['action'];
-		
-		if (isset($this->__permissions[$controller][$action])) {
-			if ($strict) {
-				return ($group == $this->__permissions[$controller][$action]);
-			} else {
-				return ($group >= $this->__permissions[$controller][$action]);
-			}
-		}
-		
-		return false;
-	}
-	
+
 /**
  * Method to check for the existence of the configuration file with 
  * the permissions and loads it.
