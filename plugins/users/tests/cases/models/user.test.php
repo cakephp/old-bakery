@@ -1,6 +1,6 @@
 <?php
 class UserModelTestCase extends CakeTestCase {
-	public $fixtures = array('plugin.users.user');
+	public $fixtures = array('plugin.users.user', 'plugin.users.conversation', 'plugin.users.message');
 	
 	private $User = null;
 	

@@ -23,7 +23,7 @@ class TestUsersController extends UsersController {
 
 class UsersControllerTestCase extends CakeTestCase {
 	private $Users = null;
-	public $fixtures = array('plugin.users.user', 'plugin.users.group');
+	public $fixtures = array('plugin.users.user', 'plugin.users.message', 'plugin.users.conversation');
 	
 	public function startTest() {
 		$this->Users = new TestUsersController();

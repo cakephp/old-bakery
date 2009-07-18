@@ -14,7 +14,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	private $Controller = null;
 	private $config = 'test_suite_permissions.php';
 	
-	public $fixtures = array('plugin.users.user');
+	public $fixtures = array('plugin.users.user', 'plugin.users.message', 'plugin.users.conversation');
 	
 		
 	public function startCase() {
