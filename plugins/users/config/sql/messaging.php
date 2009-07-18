@@ -12,7 +12,7 @@ class MessagingSchema extends CakeSchema {
 
 	public $conversations = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'sender_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10),
+		'sender_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
 		'recipient_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10),
 		'title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
@@ -23,7 +23,7 @@ class MessagingSchema extends CakeSchema {
 	public $messages = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'conversation_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
-		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+		'user_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'message' => array('type' => 'text', 'null' => false, 'default' => NULL),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),

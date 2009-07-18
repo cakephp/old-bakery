@@ -23,8 +23,8 @@ class MessageTestCase extends CakeTestCase {
 		$expected = array('Message' => array(
 			'id'  => 1,
 			'conversation_id'  => 1,
-			'user_id'  => 1,
-			'message'  => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida,phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam,vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit,feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+			'user_id'  => 6,
+			'message'  => 'I am experiencing glitches when publishing an article. Can you please look at this?',
 			'created'  => '2009-07-19 00:22:59',
 			'modified'  => '2009-07-19 00:22:59'
 		));

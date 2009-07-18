@@ -22,9 +22,9 @@ class ConversationTestCase extends CakeTestCase {
 
 		$expected = array('Conversation' => array(
 			'id'  => 1,
-			'sender_id'  => 1,
+			'sender_id'  => 6,
 			'recipient_id'  => 1,
-			'title'  => 'Lorem ipsum dolor sit amet',
+			'title'  => 'Problems with publishing.',
 			'created'  => '2009-07-19 00:22:13',
 			'modified'  => '2009-07-19 00:22:13'
 		));
