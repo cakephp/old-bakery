@@ -107,7 +107,7 @@ class AccessComponent extends Object {
  */ 
 	public function initialize($controller) {
 		if (!isset($controller->Auth)) {
-			trigger_error("CakePHP AuthComponent not found in the current controller.", E_USER_ERROR);
+			trigger_error('CakePHP AuthComponent not found in the current controller.', E_USER_ERROR);
 		}
 		
 		$controller->helpers[] = 'Users.Auth';
@@ -235,7 +235,7 @@ class AccessComponent extends Object {
 		$auth->object = $auth->authenticate = $this;
 		
 		if (!$auth->user()) {
-			$auth->authError = __("You need to login first.", true);
+			$auth->authError = __('You need to login first.', true);
 		}
 		
 		if ($this->__check($this->guest, true)) {
@@ -279,7 +279,7 @@ class AccessComponent extends Object {
  */ 
 	private function __loadPermissions() {
 		if (Configure::load($this->file) === false) {
-			trigger_error("Permission file " . APP . 'config' . DS . $this->file . '.php' . " not found.", E_USER_ERROR);
+			trigger_error('Permission file ' . APP . 'config' . DS . $this->file . '.php' . ' not found.', E_USER_ERROR);
 		} else {
 			$this->__permissions = Configure::read('App.permissions');
 		}
