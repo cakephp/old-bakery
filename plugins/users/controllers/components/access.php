@@ -27,6 +27,14 @@
 class AccessComponent extends Object {
 
 /**
+ * CakePHP components variable to load components for this class.
+ *
+ * @var array
+ * @access public
+ */ 
+	public $components = array('Cookie');
+
+/**
  * Filename of the config file holding the permissions (without the .php extension).
  *
  * @var string
@@ -57,6 +65,22 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public $salt = true;
+	
+/**
+ * Remember cookie expire time.
+ *
+ * @var string
+ * @access public
+ */ 
+	public $remember = '+2 weeks';
+	
+/** 
+ * Remember form field which has to be checked.
+ *
+ * @var string
+ * @access public
+ */ 
+	public $rememberField = 'remember';
 	
 /**
  * List of permissions from the config file.
@@ -92,6 +116,8 @@ class AccessComponent extends Object {
 		
 		$this->__loadPermissions();
 		$this->__configureAuth();
+		
+		$this->Cookie->key = Configure::read('Security.salt');
 	}
 	
 /**
@@ -140,6 +166,58 @@ class AccessComponent extends Object {
 			)));
 		}
 		return false;
+	}
+
+/**
+ * Method to login with data from the remember cookie if it is set.
+ *
+ * @return boolean Whether the user was found and logged in.
+ * @access public
+ */ 
+	public function cookieLogin() {
+		if (!$this->__controller->Auth->user()) {
+			if ($data = $this->getRememberCookie()) {
+				return $this->__controller->Auth->login($data);
+			}
+		}
+		return false;
+	}
+	
+/**
+ * Method to set a remember me cookie for the current user.
+ *
+ * @param array $data POST data from the login form.
+ * @access public
+ */ 
+	public function setRememberCookie($data) {
+		if ($this->__controller->Auth->user() && $data[$this->__controller->Auth->userModel][$this->rememberField]) {
+			$this->Cookie->write(
+				$this->__controller->Auth->sessionKey,
+				array_intersect_key($data[$this->__controller->Auth->userModel], array_flip($this->__controller->Auth->fields)), 
+				true, 
+				$this->remember
+			);
+		}
+	}
+	
+/**
+ * Method to get a remember me cookie for the current user.
+ *
+ * @param array $data POST data from the login form.
+ * @return array The login data for the user.
+ * @access public
+ */ 
+	public function getRememberCookie() {
+		return $this->Cookie->read($this->__controller->Auth->sessionKey);
+	}
+	
+/**
+ * Method to delete the remember me cookie. Useful for logout.
+ *
+ * @access public
+ */ 
+	public function deleteRememberCookie() {
+		$this->Cookie->del($this->__controller->Auth->sessionKey);
 	}
 	
 /**
