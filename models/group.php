@@ -1,7 +1,5 @@
 <?php
-class Group extends UsersAppModel {
-	public $useDbConfig = 'user_plug';
-
+class Group extends AppModel {
 	const GUESTS = 0;
 	const USERS = 10;
 	const AUTHORS = 20;

@@ -1,14 +1,13 @@
 <?php
-App::import('Model', 'Users.Group');
 $config['App']['permissions'] = array(
     'Users.Users' => array(
-        'login'          => Group::GUESTS,
-        'logout'         => Group::GUESTS,
-		'delete'         => Group::ADMINS
+        'login'          => 0,
+        'logout'         => 0,
+	'delete'         => 100
     ),
     'Comments' => array(
-        'add'           => Group::USERS,
-        'move'          => Group::MODERATORS
+        'add'            => 10,
+        'move'           => 50
     )
 );
 ?>

@@ -14,7 +14,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	private $Controller = null;
 	private $config = 'test_suite_permissions.php';
 	
-	public $fixtures = array('plugin.users.user', 'plugin.users.group');
+	public $fixtures = array('plugin.users.user');
 	
 		
 	public function startCase() {
@@ -75,7 +75,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testIsAuthorizedOnMemberUsers() {
-		$this->Controller->Session->write('Auth.User.group_id', Group::USERS);
+		$this->Controller->Session->write('Auth.User.group_id', 10);
 		
 		$this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized());
@@ -97,7 +97,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testIsAuthorizedOnModeratorUsers() {
-		$this->Controller->Session->write('Auth.User.group_id', Group::MODERATORS);
+		$this->Controller->Session->write('Auth.User.group_id', 50);
 		
 		$this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized());
@@ -119,7 +119,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 
 	public function testIsAuthorizedOnCoreDevUsers() {
-		$this->Controller->Session->write('Auth.User.group_id', Group::COREDEVS);
+		$this->Controller->Session->write('Auth.User.group_id', 80);
 		
 		$this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized());
@@ -141,7 +141,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testIsAuthorizedOnAdministratorUsers() {
-		$this->Controller->Session->write('Auth.User.group_id', Group::ADMINS);
+		$this->Controller->Session->write('Auth.User.group_id', 100);
 		
 		$this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized());

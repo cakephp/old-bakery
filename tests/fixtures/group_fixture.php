@@ -2,7 +2,7 @@
 class GroupFixture extends CakeTestFixture {
 	public $name = 'Group';
 
-	public $import = array('model' => 'Users.Group', 'records' => false);
+	public $import = array('model' => 'Group', 'records' => false);
 	
 	public $records = array(
 		array('id' => 0, 'name' => 'Guests'),
