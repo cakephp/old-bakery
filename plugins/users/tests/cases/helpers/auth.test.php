@@ -1,5 +1,4 @@
 <?php
-App::import('Model', 'Users.Group');
 App::import('Controller', 'Users.AppController');
 App::import('Helper', 'Users.Auth');
 App::import('Helper', 'Session');
@@ -36,7 +35,7 @@ class AuthHelperTestCase extends CakeTestCase {
 	public function testLoggedOnSignedInUser() {
 		$this->Controller->Session->write('Auth.User', array(
 			'username' => 'Phally', 
-			'group_id' => Group::ADMINS)
+			'group_id' => 100)
 		);
 		$this->Auth->beforeRender();
 		$this->assertTrue($this->Auth->logged());
@@ -44,42 +43,42 @@ class AuthHelperTestCase extends CakeTestCase {
 	
 	public function testVisibilityOnNotSignedInUser() {
 		$this->Auth->beforeRender();
-		$this->assertFalse($this->Auth->visible(GROUP::USERS));
-		$this->assertFalse($this->Auth->visible(GROUP::MODERATORS));
-		$this->assertFalse($this->Auth->visible(GROUP::ADMINS));
+		$this->assertFalse($this->Auth->visible(10));
+		$this->assertFalse($this->Auth->visible(50));
+		$this->assertFalse($this->Auth->visible(100));
 	}
 	
 	public function testVisibilityOnMemberUser() {
 		$this->Controller->Session->write('Auth.User', array(
-			'group_id' => Group::USERS
+			'group_id' => 10
 		));
 		
 		$this->Auth->beforeRender();
-		$this->assertTrue($this->Auth->visible(GROUP::USERS));
-		$this->assertFalse($this->Auth->visible(GROUP::MODERATORS));
-		$this->assertFalse($this->Auth->visible(GROUP::ADMINS));
+		$this->assertTrue($this->Auth->visible(10));
+		$this->assertFalse($this->Auth->visible(50));
+		$this->assertFalse($this->Auth->visible(100));
 	}
 	
 	public function testVisibilityOnModeratorUser() {
 		$this->Controller->Session->write('Auth.User', array(
-			'group_id' => Group::MODERATORS
+			'group_id' => 50
 		));
 		
 		$this->Auth->beforeRender();
-		$this->assertTrue($this->Auth->visible(GROUP::USERS));
-		$this->assertTrue($this->Auth->visible(GROUP::MODERATORS));
-		$this->assertFalse($this->Auth->visible(GROUP::ADMINS));
+		$this->assertTrue($this->Auth->visible(10));
+		$this->assertTrue($this->Auth->visible(50));
+		$this->assertFalse($this->Auth->visible(100));
 	}
 	
 	public function testVisibilityOnAdministratorUser() {
 		$this->Controller->Session->write('Auth.User', array(
-			'group_id' => Group::ADMINS
+			'group_id' => 100
 		));
 		
 		$this->Auth->beforeRender();
-		$this->assertTrue($this->Auth->visible(GROUP::USERS));
-		$this->assertTrue($this->Auth->visible(GROUP::MODERATORS));
-		$this->assertTrue($this->Auth->visible(GROUP::ADMINS));
+		$this->assertTrue($this->Auth->visible(10));
+		$this->assertTrue($this->Auth->visible(50));
+		$this->assertTrue($this->Auth->visible(100));
 	}
 	
 	public function testUserOnNotSignedInUser() {
@@ -95,20 +94,20 @@ class AuthHelperTestCase extends CakeTestCase {
 	public function testUserOnSignedInUser() {
 		$this->Controller->Session->write('Auth.User', array(
 			'username' => 'Phally', 
-			'group_id' => Group::ADMINS
+			'group_id' => 100
 		));
 		
 		$expected = array(
 			'User' => array(
 				'username' => 'Phally', 
-				'group_id' => Group::ADMINS
+				'group_id' => 100
 			)
 		);
 		
 		$result = $this->Auth->user();
 		$this->assertEqual($expected, $result);
 		
-		$expected = Group::ADMINS;
+		$expected = 100;
 		
 		$result = $this->Auth->user('group_id');
 		$this->assertEqual($expected, $result);

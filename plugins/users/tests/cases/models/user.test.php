@@ -1,6 +1,6 @@
 <?php
 class UserModelTestCase extends CakeTestCase {
-	public $fixtures = array('plugin.users.user', 'plugin.users.group');
+	public $fixtures = array('plugin.users.user', 'plugin.users.conversation', 'plugin.users.message');
 	
 	private $User = null;
 	
@@ -11,6 +11,10 @@ class UserModelTestCase extends CakeTestCase {
 	
 	public function testUserInstance() {
 		$this->assertIsA($this->User, 'User');
+	}
+	
+	public function testDisplayField() {
+		$this->AssertEqual($this->User->displayField, 'username');
 	}
 	
 	public function testAttachedBehaviors() {
@@ -53,47 +57,6 @@ class UserModelTestCase extends CakeTestCase {
 		);
 		
 		$this->assertEqual($results, $expected);
-	}
-	
-	public function testBelongsToGroup() {
-		$this->assertTrue(in_array('Group', array_keys($this->User->belongsTo)));
-		
-		$expected = array(
-			'className' => 'Group', 
-			'foreignKey' => 'group_id', 
-			'conditions' => null, 
-			'fields' => null, 
-			'order' => null, 
-			'counterCache' => false
-		);
-		$this->assertEqual($expected, $this->User->belongsTo['Group']);
-		
-		$expected = array(
-			'User' => array(
-				'id' => 1, 
-				'username' => 'Phally'
-			),
-			'Group' => array(
-				'id' => 100, 
-				'name' => 'Administrators'
-			)
-		);
-		
-		$result = $this->User->find('first', array(
-			'fields' => array(
-				'User.id', 
-				'User.username', 
-				'Group.id', 
-				'Group.name'
-			), 
-			'conditions' => array(
-				'User.username' => 'Phally'
-			), 
-			'contain' => array(
-				'Group'
-			)
-		));
-		$this->assertEqual($expected, $result);
 	}
 }
 ?>

@@ -1,14 +1,14 @@
 <?php
-App::import('Model', 'Users.Group');
+App::import('Model', 'Group');
 $config['App']['permissions'] = array(
     'Pages' => array(
         'display'        => Group::GUESTS,
     ),
     'Users.Users' => array(
-        'logout'        => Group::GUESTS,
+        'logout'         => Group::GUESTS,
     ),
     'DebugKit.ToolbarAccess' => array(
-        'history_state' => Group::GUESTS
+        'history_state'  => Group::GUESTS
     )
 );
 ?>
