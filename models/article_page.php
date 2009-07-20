@@ -3,8 +3,8 @@ class ArticlePage extends AppModel {
 
 	public $name = 'ArticlePage';
 	public $actsAs = array(
-		'Revision',
-		'Draft'
+		'Drafted' => array('fields' => array('title','content')),
+		'Revision'
 	);
 
 	public $belongsTo = array(

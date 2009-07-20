@@ -1,6 +1,6 @@
 <?php 
 /* SVN FILE: $Id$ */
-/* Bakery schema generated on: 2009-07-17 10:07:54 : 1247818734*/
+/* Bakery schema generated on: 2009-07-20 12:07:53 : 1248084713*/
 class BakerySchema extends CakeSchema {
 	var $name = 'Bakery';
 
@@ -11,20 +11,6 @@ class BakerySchema extends CakeSchema {
 	function after($event = array()) {
 	}
 
-	var $article_page_drafts = array(
-		'version_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'title' => array('type' => 'string', 'null' => true, 'default' => NULL),
-		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'version_id', 'unique' => 1))
-	);
-	var $article_page_revs = array(
-		'draft_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'title' => array('type' => 'string', 'null' => true, 'default' => NULL),
-		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'draft_id', 'unique' => 1))
-	);
 	var $article_pages = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'article_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 10),
@@ -32,6 +18,21 @@ class BakerySchema extends CakeSchema {
 		'pagenum' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
 		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
+	);
+	var $article_pages_drafts = array(
+		'draft_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'title' => array('type' => 'string', 'null' => true, 'default' => NULL),
+		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'draft_id', 'unique' => 1))
+	);
+	var $article_pages_revs = array(
+		'version_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'version_created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'title' => array('type' => 'string', 'null' => true, 'default' => NULL),
+		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'version_id', 'unique' => 1))
 	);
 	var $articles = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
@@ -97,6 +98,15 @@ class BakerySchema extends CakeSchema {
 		'published' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'key' => 'index'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'PUBLISHED_INDEX' => array('column' => 'published', 'unique' => 0))
 	);
+	var $conversations = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'sender_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+		'recipient_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10),
+		'title' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
+	);
 	var $dum_dummy_fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 		'tablename' => array('type' => 'string', 'null' => false, 'default' => NULL),
@@ -118,7 +128,7 @@ class BakerySchema extends CakeSchema {
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'name', 'unique' => 1))
 	);
-	var $featured = array(
+	var $featureds = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'article_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 10),
 		'category_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 10),

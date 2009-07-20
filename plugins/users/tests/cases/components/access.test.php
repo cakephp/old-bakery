@@ -14,7 +14,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	private $Controller = null;
 	private $config = 'test_suite_permissions.php';
 	
-	public $fixtures = array('plugin.users.user', 'plugin.users.group');
+	public $fixtures = array('plugin.users.user', 'plugin.users.message', 'plugin.users.conversation');
 	
 		
 	public function startCase() {
@@ -24,6 +24,8 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function endCase() {
+		$this->Controller->Auth->logout();
+		$this->Controller->Access->Cookie->destroy();
 		@unlink(APP . 'config' . DS . $this->config);
 	}
 	
@@ -73,7 +75,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testIsAuthorizedOnMemberUsers() {
-		$this->Controller->Session->write('Auth.User.group_id', Group::USERS);
+		$this->Controller->Session->write('Auth.User.group_id', 10);
 		
 		$this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized());
@@ -95,7 +97,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testIsAuthorizedOnModeratorUsers() {
-		$this->Controller->Session->write('Auth.User.group_id', Group::MODERATORS);
+		$this->Controller->Session->write('Auth.User.group_id', 50);
 		
 		$this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized());
@@ -117,7 +119,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 
 	public function testIsAuthorizedOnCoreDevUsers() {
-		$this->Controller->Session->write('Auth.User.group_id', Group::COREDEVS);
+		$this->Controller->Session->write('Auth.User.group_id', 80);
 		
 		$this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized());
@@ -139,7 +141,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testIsAuthorizedOnAdministratorUsers() {
-		$this->Controller->Session->write('Auth.User.group_id', Group::ADMINS);
+		$this->Controller->Session->write('Auth.User.group_id', 100);
 		
 		$this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized());
@@ -230,24 +232,32 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testLazyLoginInDebugMode() {
+		$mode = Configure::read('debug');
 		Configure::write('debug', 1);
+		
 		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Controller->Access->lazyLogin('Phally');
 		
 		$this->assertEqual($this->Controller->Auth->user('id'), 1);
 		$this->assertEqual($this->Controller->Auth->user('username'), 'Phally');
 		$this->assertEqual($this->Controller->Auth->user('group_id'), 100);
+		
+		Configure::write('debug', $mode);
 	}
 	
 	public function testLazyLoginInProductionMode() {
+		$mode = Configure::read('debug');
 		Configure::write('debug', 0);
 		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Controller->Access->lazyLogin('Phally');
 		
 		$this->assertNull($this->Controller->Auth->user());
+		
+		Configure::write('debug', $mode);
 	}
 	
 	public function testLazyLoginWithSignedInUser() {
+		$mode = Configure::read('debug');
 		Configure::write('debug', 1);
 		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		
@@ -259,8 +269,200 @@ class AccessComponentTestCase extends CakeTestCase {
 		$this->assertEqual($this->Controller->Auth->user('id'), 3);
 		$this->assertEqual($this->Controller->Auth->user('username'), 'coredev');
 		$this->assertEqual($this->Controller->Auth->user('group_id'), 80);
+		
+		Configure::write('debug', $mode);
 	}
 	
+	public function testSetRememberCookieWithoutRememberValueAndNoLogin() {
+		$data = array(
+			$this->Controller->Auth->userModel => array(
+				$this->Controller->Auth->fields['username'] => 'Phally',
+				$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword'
+			)
+		);
+		
+		$this->Controller->Access->setRememberCookie($data);
+		$result = $this->Controller->Access->Cookie->read($this->Controller->Auth->sessionKey);
+		$expected = null;
+		$this->assertEqual($result, $expected);
+	}
 	
+	public function testSetRememberCookieWithRememberValueAndNoLogin() {
+		$data = array(
+			$this->Controller->Auth->userModel => array(
+				$this->Controller->Auth->fields['username'] => 'Phally',
+				$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword',
+				$this->Controller->Access->rememberField => 0
+			)
+		);
+		
+		$this->Controller->Access->setRememberCookie($data);
+		$result = $this->Controller->Access->Cookie->read($this->Controller->Auth->sessionKey);
+		$expected = null;
+		$this->assertEqual($result, $expected);
+		
+		$this->Controller->Access->Cookie->destroy();
+		
+		$data = array(
+			$this->Controller->Auth->userModel => array(
+				$this->Controller->Auth->fields['username'] => 'Phally',
+				$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword',
+				$this->Controller->Access->rememberField => 1
+			)
+		);
+		
+		$this->Controller->Access->setRememberCookie($data);
+		$result = $this->Controller->Access->Cookie->read($this->Controller->Auth->sessionKey);
+		$expected = null;
+		$this->assertEqual($result, $expected);
+	}
+	
+	public function testSetRememberCookieWithRememberValueAndLogin() {
+		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		$this->Controller->Access->lazyLogin('Phally');
+		
+		$data = array(
+			$this->Controller->Auth->userModel => array(
+				$this->Controller->Auth->fields['username'] => 'Phally',
+				$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword',
+				$this->Controller->Access->rememberField => 0
+			)
+		);
+		
+		$this->Controller->Access->setRememberCookie($data);
+		$result = $this->Controller->Access->Cookie->read($this->Controller->Auth->sessionKey);
+		$expected = null;
+		$this->assertEqual($result, $expected);
+		
+		$this->Controller->Access->Cookie->destroy();
+		
+		$data = array(
+			$this->Controller->Auth->userModel => array(
+				$this->Controller->Auth->fields['username'] => 'Phally',
+				$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword',
+				$this->Controller->Access->rememberField => 1
+			)
+		);
+		
+		$this->Controller->Access->setRememberCookie($data);
+		$result = $this->Controller->Access->Cookie->read($this->Controller->Auth->sessionKey);
+		$expected = array(
+			$this->Controller->Auth->fields['username'] => 'Phally',
+			$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword'
+		);
+		$this->assertEqual($result, $expected);
+	}
+	
+	public function testGetRememberCookie() {
+		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		$this->Controller->Access->lazyLogin('Phally');
+		
+		$result = $this->Controller->Access->getRememberCookie();
+		$expected = null;
+		$this->assertEqual($result, $expected);
+		
+		$data = array(
+			$this->Controller->Auth->userModel => array(
+				$this->Controller->Auth->fields['username'] => 'Phally',
+				$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword',
+				$this->Controller->Access->rememberField => 1
+			)
+		);
+		
+		$this->Controller->Access->setRememberCookie($data);
+		
+		$result = $this->Controller->Access->getRememberCookie();
+		$expected = array(
+			$this->Controller->Auth->fields['username'] => 'Phally',
+			$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword'
+		);
+		$this->assertEqual($result, $expected);
+	}
+	
+	public function testDeleteRememberCookie() {
+		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		$this->Controller->Access->lazyLogin('Phally');
+		
+		$data = array(
+			$this->Controller->Auth->userModel => array(
+				$this->Controller->Auth->fields['username'] => 'Phally',
+				$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword',
+				$this->Controller->Access->rememberField => 1
+			)
+		);
+		
+		$this->Controller->Access->setRememberCookie($data);
+		
+		$result = $this->Controller->Access->getRememberCookie();
+		$expected = array(
+			$this->Controller->Auth->fields['username'] => 'Phally',
+			$this->Controller->Auth->fields['password'] => 'SomeInRealityHashedPassword'
+		);
+		$this->assertEqual($result, $expected);
+		
+		$this->Controller->Access->deleteRememberCookie();
+		
+		$result = $this->Controller->Access->getRememberCookie();
+		$expected = null;
+		$this->assertEqual($result, $expected);
+	}
+	
+	public function testCookieLoginWithoutCookieAndWithoutLoggedInUser() {
+		$this->Controller->Access->cookieLogin();
+		$this->assertNull($this->Controller->Auth->user());
+	}
+	
+	public function testCookieLoginWithoutCookieAndWithLoggedInUser() {
+		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		$this->Controller->Access->lazyLogin('Phally');
+		
+		$this->Controller->Access->cookieLogin();
+		$result = $this->Controller->Auth->user($this->Controller->Auth->fields['username']);
+		$expected = 'Phally';
+		$this->assertEqual($result, $expected);
+	}
+	
+	public function testCookieLoginWithCookieAndWithoutLoggedInUser() {
+		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		
+		$data = array(
+			$this->Controller->Auth->userModel => array(
+				$this->Controller->Auth->fields['username'] => 'Phally',
+				$this->Controller->Auth->fields['password'] => '86a8c2da8527a1c6978bdca6d7986fe14ae147fe',
+				$this->Controller->Access->rememberField => 1
+			)
+		);
+		
+		$this->Controller->Auth->login($data);
+		$this->Controller->Access->setRememberCookie($data);
+		$this->Controller->Auth->logout();
+		
+		$this->Controller->Access->cookieLogin();
+		$result = $this->Controller->Auth->user($this->Controller->Auth->fields['username']);
+		$expected = 'Phally';
+		$this->assertEqual($result, $expected);
+	}
+	
+	public function testCookieLoginWithCookieAndLoggedInUser() {
+		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		
+		$data = array(
+			$this->Controller->Auth->userModel => array(
+				$this->Controller->Auth->fields['username'] => 'Phally',
+				$this->Controller->Auth->fields['password'] => '86a8c2da8527a1c6978bdca6d7986fe14ae147fe',
+				$this->Controller->Access->rememberField => 1
+			)
+		);
+		
+		$this->Controller->Auth->login($data);
+		$this->Controller->Access->setRememberCookie($data);
+		$this->Controller->Auth->logout();
+		$this->Controller->Access->lazyLogin('coredev');
+		
+		$this->Controller->Access->cookieLogin();
+		$result = $this->Controller->Auth->user($this->Controller->Auth->fields['username']);
+		$expected = 'coredev';
+		$this->assertEqual($result, $expected);
+	}
 }
 ?>

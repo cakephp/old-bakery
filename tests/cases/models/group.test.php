@@ -1,20 +1,16 @@
 <?php
 class GroupModelTestCase extends CakeTestCase {
-	public $fixtures = array('plugin.users.group', 'plugin.users.user');
+	public $fixtures = array('app.group', 'plugin.users.user', 'plugin.users.conversation', 'plugin.users.message');
 	
 	private $Group = null;
 	
 	public function startTest($method) {
 		parent::startTest($method);
-		$this->Group = ClassRegistry::init('Users.Group');
+		$this->Group = ClassRegistry::init('Group');
 	}
 	
 	public function testGroupInstance() {
 		$this->assertIsA($this->Group, 'Group');
-	}
-	
-	public function testAttachedBehaviors() {
-		$this->assertTrue(in_array('Containable', $this->Group->actsAs));
 	}
 	
 	public function testHasManyUser() {
@@ -54,6 +50,7 @@ class GroupModelTestCase extends CakeTestCase {
 			)
 		);
 		
+		$this->Group->Behaviors->attach('Containable');
 		$result = $this->Group->find('first', array(
 			'fields' => array(
 				'id',

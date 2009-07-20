@@ -44,10 +44,10 @@ class Article extends AppModel {
 	);
 
 	public $hasMany = array(
-		'ArticlePage' => array('conditions' => array('pagenum !=' => 0))
+		'ArticlePage' => array('conditions' => array('pagenum !=' => 0)),
 	//	'Attachment',
 	//	'Comment',
-	//	'Rating'
+		'Rating'
 	);
 	
 	public $hasAndBelongsToMany = array('Tag' => array(
