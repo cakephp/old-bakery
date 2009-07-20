@@ -73,5 +73,15 @@ class Article extends AppModel {
 
 		return true;
 	}
+
+	public function publish($id){
+		$this->set(array(
+			'id' => $id,
+			'published' => 1,
+			'published_date' => date('Y-m-d H:i:s')
+		));
+		return $this->save();
+	}
+
 }
 ?>
