@@ -163,6 +163,7 @@ class TagTestCase extends CakeTestCase {
 		// Author edits a page 
 		$this->ArticlePage->save(array('ArticlePage' => array(
 			'id' => 2,
+			'title' => 'edited title',
 			'content' => 'edited content'
 		)));
 
@@ -188,10 +189,16 @@ class TagTestCase extends CakeTestCase {
 		$this->ArticlePage->Article->Intro->saveDraft = true;
 
 		// Author edits a page again
+		/** this should generate a revision */
 		$this->ArticlePage->save(array('ArticlePage' => array(
 			'id' => 2,
+			'title' => 'edited title again',
 			'content' => 'edited content again'
 		)));
+		$this->ArticlePage->showDraft = true;
+		$this->ArticlePage->createRevision();
+		$this->ArticlePage->showDraft = false;
+		
 
 		/**
 		 * @todo revision should be created automatically
@@ -221,6 +228,8 @@ class TagTestCase extends CakeTestCase {
 			'id' => 2))), 3, 'Incorret number of Revisions : %s');
 
 		// Moderator accepts this edit
+		/* this should not create a revision */
+		$this->ArticlePage->Behaviors->Revision->settings['ArticlePage']['auto'] = false;
 		$this->assertTrue($this->ArticlePage->acceptDraft(2), 'Accepting draft failed');
 		
 		/**
