@@ -20,12 +20,12 @@ class UserFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'id'  => 1,
-			'username'  => 'Lorem ipsum dolor sit amet',
-			'email'  => 'Lorem ipsum dolor sit amet',
-			'psword'  => 'Lorem ipsum dolor sit amet',
-			'tmp_password'  => 'Lorem ipsum dolor sit amet',
+			'username'  => 'john',
+			'email'  => 'john@example.org',
+			'psword'  => 'asdasdasdasd',
+			'tmp_password'  => '',
 			'email_authenticated'  => 1,
-			'email_token'  => 'Lorem ipsum dolor sit amet',
+			'email_token'  => 'abcd',
 			'email_token_expires'  => '2009-07-17 22:40:54',
 			'created'  => '2009-07-17 22:40:54',
 			'modified'  => '2009-07-17 22:40:54'
