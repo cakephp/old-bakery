@@ -198,13 +198,10 @@ class TagTestCase extends CakeTestCase {
 		$this->ArticlePage->showDraft = true;
 		$this->ArticlePage->createRevision();
 		$this->ArticlePage->showDraft = false;
-		
-
 		/**
 		 * @todo revision should be created automatically
 		 * problem with drafted compatability
 		 */
-	//	$this->ArticlePage->createRevision();
 
 		/**
 		 * With an edit on a live page, the current situation should be:
@@ -229,8 +226,9 @@ class TagTestCase extends CakeTestCase {
 
 		// Moderator accepts this edit
 		/* this should not create a revision */
-		$this->ArticlePage->Behaviors->Revision->settings['ArticlePage']['auto'] = false;
+		$this->ArticlePage->Behaviors->disable('Revision');
 		$this->assertTrue($this->ArticlePage->acceptDraft(2), 'Accepting draft failed');
+		$this->ArticlePage->Behaviors->enable('Revision');
 		
 		/**
 		 * There should be no drafts, article should be published with
@@ -243,20 +241,6 @@ class TagTestCase extends CakeTestCase {
 		$this->assertIdentical($this->ArticlePage->ShadowModel->find('count', array('conditions'=> array(
 			'id' => 2))), 3, 'Incorret number of Revisions : %s');
 
-		//debug($this->ArticlePage->find('all'));
-		//debug($this->ArticlePage->Article->find('all'));
-		//debug($this->ArticlePage->DraftModel->find('all'));
-		//debug($this->ArticlePage->ShadowModel->findAllById(2));
-	}
-
-	function sgetTests() {
-		$tests = array('start','startCase');
-
-		$tests[] = 'testArticleFlow';
-
-		$tests[] = 'endCase';
-		$tests[] = 'end';
-		return $tests;
 	}
 }
 ?>
