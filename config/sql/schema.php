@@ -1,6 +1,6 @@
 <?php 
 /* SVN FILE: $Id$ */
-/* Bakery schema generated on: 2009-07-20 11:07:43 : 1248080743*/
+/* Bakery schema generated on: 2009-07-20 12:07:53 : 1248084713*/
 class BakerySchema extends CakeSchema {
 	var $name = 'Bakery';
 
@@ -11,20 +11,6 @@ class BakerySchema extends CakeSchema {
 	function after($event = array()) {
 	}
 
-	var $article_page_drafts = array(
-		'draft_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'title' => array('type' => 'string', 'null' => true, 'default' => NULL),
-		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'draft_id', 'unique' => 1))
-	);
-	var $article_page_revs = array(
-		'version_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
-		'title' => array('type' => 'string', 'null' => true, 'default' => NULL),
-		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
-		'indexes' => array('PRIMARY' => array('column' => 'version_id', 'unique' => 1))
-	);
 	var $article_pages = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'article_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 10),
@@ -32,6 +18,21 @@ class BakerySchema extends CakeSchema {
 		'pagenum' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 3),
 		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
+	);
+	var $article_pages_drafts = array(
+		'draft_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'title' => array('type' => 'string', 'null' => true, 'default' => NULL),
+		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'draft_id', 'unique' => 1))
+	);
+	var $article_pages_revs = array(
+		'version_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'version_created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+		'title' => array('type' => 'string', 'null' => true, 'default' => NULL),
+		'content' => array('type' => 'text', 'null' => true, 'default' => NULL),
+		'indexes' => array('PRIMARY' => array('column' => 'version_id', 'unique' => 1))
 	);
 	var $articles = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
