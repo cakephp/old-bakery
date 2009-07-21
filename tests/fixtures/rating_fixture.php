@@ -20,6 +20,13 @@ class RatingFixture extends CakeTestFixture {
 			'value'  => 1,
 			'created'  => '2009-07-17 22:40:54'
 		),
+		array(
+			'id'  => 2,
+			'user_id'  => 2,
+			'article_id'  => 1,
+			'value'  => 3,
+			'created'  => '2009-07-17 22:20:54'
+		),
 	);
 }
 ?>

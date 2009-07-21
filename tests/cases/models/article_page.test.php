@@ -62,16 +62,15 @@ class TagTestCase extends CakeTestCase {
 
 	function testEdit() {
 		$this->loadFixtures('ArticlePage','ArticlePagesDraft');
-		$this->loadFixtures('ArticlePage');
 		$this->ArticlePage->id = 1;
 		$result = $this->ArticlePage->field('title');
-		$this->assertEqual($result,'Lorem ipsum dolor sit amet');
+		$this->assertEqual($result,'Page 1 : Lorem ipsum dolor sit amet');
 
 		$this->ArticlePage->save(array('ArticlePage'=>array('id'=>1, 'title' => 'edited title')));
 
 		$this->assertEqual($this->ArticlePage->hasDraft(1), 1);
 		$result = $this->ArticlePage->field('title');
-		$this->assertEqual($result,'Lorem ipsum dolor sit amet');
+		$this->assertEqual($result,'Page 1 : Lorem ipsum dolor sit amet');
 
 		$this->assertTrue($this->ArticlePage->acceptDraft(1));
 
