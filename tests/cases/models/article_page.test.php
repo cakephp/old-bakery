@@ -2,7 +2,7 @@
 /* Tag Test cases generated on: 2009-07-17 22:07:14 : 1247860814*/
 App::import('Model', 'ArticlePage');
 
-class TagTestCase extends CakeTestCase {
+class ArticlePageTestCase extends CakeTestCase {
 	public $fixtures = array('app.article_page','app.article_pages_draft','app.article_pages_rev','app.tag','app.article','app.articles_tag','app.user','app.category','app.conversation','app.message','app.rating');
 	public $autoFixtures = false;
 	private $ArticlePage = null;
