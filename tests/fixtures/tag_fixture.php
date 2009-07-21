@@ -15,8 +15,14 @@ class TagFixture extends CakeTestFixture {
 		array(
 			'id'  => 1,
 			'linked'  => 1,
-			'name'  => 'Lorem ipsum dolor ',
-			'keyname'  => 'Lorem ipsum dolor '
+			'name'  => 'News',
+			'keyname'  => 'news'
+		),
+		array(
+			'id'  => 2,
+			'linked'  => 1,
+			'name'  => 'Fun',
+			'keyname'  => 'fun'
 		),
 	);
 }
