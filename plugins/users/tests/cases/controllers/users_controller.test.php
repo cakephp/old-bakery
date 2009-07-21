@@ -35,7 +35,7 @@ class UsersControllerTestCase extends CakeTestCase {
 		
 	}
 	
-	public function testLoginAction() {
+	public function testLoginActionWithValidUser() {
 		$this->Users->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Users->data = array(
 			$this->Users->Auth->userModel => array(
@@ -63,6 +63,26 @@ class UsersControllerTestCase extends CakeTestCase {
 			$this->Users->Auth->loginRedirect = '/';
 		}
 		$this->assertEqual($this->Users->redirectUrl, $this->Users->Auth->loginRedirect);
+	}
+	
+	public function testLoginActionWithoutValidUser() {
+		$this->Users->Auth->fields = array('username' => 'username', 'password' => 'psword');
+		$this->Users->data = array(
+			$this->Users->Auth->userModel => array(
+				$this->Users->Auth->fields['username'] => 'Phally',
+				$this->Users->Auth->fields['password'] => 'Some wrong password...',
+				$this->Users->Access->rememberField => 1
+			)
+		);
+		
+		$this->Users->beforeFilter();
+		$this->Users->Component->startup($this->Users);
+		$this->Users->Auth->login($this->Users->data);
+		$this->Users->login();
+		
+		$this->assertNull($this->Users->Access->getRememberCookie());
+		$this->assertNull($this->Users->Auth->user('username'));
+		$this->assertNull($this->Users->redirectUrl);
 	}
 	
 	public function testLogoutAction() {

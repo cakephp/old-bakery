@@ -130,6 +130,17 @@ class AccessComponent extends Object {
 	}
 	
 /**
+ * Callback method to start the AccessComponent.
+ *
+ * @param object $controller Instance of the current controller.
+ * @return void
+ * @access public
+ */ 
+	public function startup($controller) {
+		$controller->set('authFields', $controller->Auth->fields);
+	}
+	
+/**
  * Method used by CakePHP's AuthComponent to check if a certain user 
  * has access to the current location.
  *
@@ -137,7 +148,7 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function isAuthorized($group = null, $strict = false) {
-		if (!$group) {
+		if (!isset($group)) {
 			$group = $this->__auth->user($this->group);
 		}
 		

@@ -54,6 +54,11 @@ class AccessComponentTestCase extends CakeTestCase {
 		$this->AssertIsA($this->Controller->Auth->authenticate, 'AccessComponent');
 	}
 	
+	public function testPassingAuthFields() {
+		$this->Controller->Access->startup($this->Controller);
+		$this->assertEqual($this->Controller->viewVars['authFields'], $this->Controller->Auth->fields);
+	}
+	
 	public function testIsAuthorizedOnNonSignedInUsers() {
 		$this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized());
