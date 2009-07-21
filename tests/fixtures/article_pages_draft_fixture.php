@@ -13,8 +13,8 @@ class ArticlePagesDraftFixture extends CakeTestFixture {
 		array(
 			'draft_id'  => 1,
 			'id'  => 1,
-			'title'  => 'Lorem ipsum dolor sit amet',
-			'content'  => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+			'title'  => 'Lorem ipsum dolor sit amet - draft edit',
+			'content'  => 'Lorem ipsum dolor sit amet, aliquet feugiat - draft edit'
 		),
 	);
 }
