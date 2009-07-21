@@ -11,7 +11,8 @@ class ArticlePage extends AppModel {
 		'Article' => array(
 			'counterCache' => true,
 			'counterScope' => array('pagenum !=' => 0),
-			'fields' => array('id','title','slug')
+			'fields' => array('id','title','slug'),
+			'dependent' => true
 		)
 	);
 

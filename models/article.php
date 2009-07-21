@@ -83,5 +83,31 @@ class Article extends AppModel {
 		return $this->save();
 	}
 
+	public function published($id) {
+		return $this->find('count', array('recursive' => -1,'conditions' => array(
+			$this->primaryKey => $id,
+			'published' => true,
+			'deleted' => false
+		)));
+	}
+
+	public function delete($id = null, $soft = true) {
+		if (!empty($id)) {
+            $this->id = $id;
+        }
+        $id = $this->id;
+		if (!$this->exists())
+			return null;
+		if ($soft) {
+			return $this->save(array(
+				'id' => $id,
+				'deleted' => true,
+				'published' => false,
+				'deleted_date' => date('Y-m-d H:i:s')
+			),false);
+		} else {
+			return parent::del($id);
+		}
+	}
 }
 ?>
