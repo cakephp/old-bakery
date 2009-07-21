@@ -91,7 +91,7 @@ class TagTestCase extends CakeTestCase {
 	}
 	
 	function testDelete() {
-		$this->loadFixtures('Article','ArticlePage');
+		$this->loadFixtures('Article','ArticlePage','ArticlePagesDraft','ArticlePagesRev');
 
 		$this->Article->Behaviors->attach('Containable');
 		$result = $this->Article->find('first', array(
@@ -108,6 +108,9 @@ class TagTestCase extends CakeTestCase {
 		$this->assertFalse(empty($result['ArticlePage']), 'Article has no pages : %S');
 		$this->assertFalse(empty($result['Intro']), 'Article has no Intro : %S');
 
+		$pageIDs = Set::extract('/ArticlePage/id', $result);
+		$pageIDs[] = $result['Intro']['id'];
+
 		$this->assertTrue($this->Article->delete(1), 'Failed to delete article : %s');
 
 		$result = $this->Article->find('first', array(
@@ -123,6 +126,27 @@ class TagTestCase extends CakeTestCase {
 		$this->assertNotNull($result['Article']['deleted_date'], 'Article does not have deleted date : %S');
 		$this->assertFalse(empty($result['ArticlePage']), 'Article has no pages : %S');
 		$this->assertFalse(empty($result['Intro']), 'Article has no Intro : %S');
+
+		/**
+		 * At this point the Article is unpublished and in the "bin". The article pages still exist in the live table
+		 * Doing a permanent erasing, should remove the pages, as well as their history
+		 */
+
+		$this->assertTrue($this->Article->delete(1,false), 'Hard delete failed : %s');
+		$this->assertFalse($this->Article->read(null,1), 'Article still exists : %s');
+		$result = $this->Article->ArticlePage->find('count', array(
+			'recursive' => -1,
+			'conditions' => array('article_id' => 1)));
+		$this->assertIdentical($result, 0, 'Article still has pages : %s');
+		$result = $this->Article->ArticlePage->DraftModel->find('count', array(
+			'recursive' => -1,
+			'conditions' => array('id' => $pageIDs)));
+		$this->assertIdentical($result, 0, 'Article\'s pages still has drafts : %s');
+
+		$result = $this->Article->ArticlePage->ShadowModel->find('count', array(
+			'recursive' => -1,
+			'conditions' => array('id' => $pageIDs)));
+		$this->assertIdentical($result, 0, 'Article\'s pages still has revisions : %s');
 
 	}
 

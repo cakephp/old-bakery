@@ -14,9 +14,24 @@ class ArticlePagesRevFixture extends CakeTestFixture {
 	var $records = array(
 		array(
 			'version_id'  => 1,
+			'version_created' => '2009-01-01 05:05:05',
 			'id'  => 1,
-			'title'  => 'Lorem ipsum dolor sit amet',
+			'title'  => 'Page 1 : Lorem ipsum dolor sit amet',
 			'content'  => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+		),
+		array(
+			'version_id'  => 2,
+			'version_created' => '2009-01-01 06:06:06',
+			'id'  => 2,
+			'title'  => 'Intro : Lorem ipsum dolor sit amet',
+			'content'  => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'
+		),
+		array(
+			'version_id'  => 3,
+			'version_created' => '2009-01-01 07:07:07',
+			'id'  => 1,
+			'title'  => 'Lorem ipsum dolor sit amet - draft edit',
+			'content'  => 'Lorem ipsum dolor sit amet, aliquet feugiat - draft edit'
 		),
 	);
 }

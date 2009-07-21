@@ -44,7 +44,9 @@ class Article extends AppModel {
 	);
 
 	public $hasMany = array(
-		'ArticlePage' => array('conditions' => array('pagenum !=' => 0)),
+		'ArticlePage' => array(
+			'dependent' => true,
+			'conditions' => array('pagenum !=' => 0)),
 	//	'Attachment',
 	//	'Comment',
 		'Rating'
@@ -106,7 +108,13 @@ class Article extends AppModel {
 				'deleted_date' => date('Y-m-d H:i:s')
 			),false);
 		} else {
-			return parent::del($id);
+			$pageIDs = $this->ArticlePage->find('list',array(
+				'fields' => array('id'),
+				'recursive' => -1,
+				'conditions' => array('article_id' => $id)));
+			if (parent::delete($id)) {
+				return $this->ArticlePage->ShadowModel->deleteAll(array('id' => $pageIDs));
+			}
 		}
 	}
 }
