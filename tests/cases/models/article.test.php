@@ -173,6 +173,10 @@ class TagTestCase extends CakeTestCase {
 
 		$this->assertTrue($this->Article->published(1), 'Article did not get published : %S');
 
+		$this->assertTrue($this->Article->delete(1), 'Failed to delete article : %s');
+
+		$this->assertFalse($this->Article->published(1), 'Article deletion did not unpublish : %S');
 	}
+
 }
 ?>
