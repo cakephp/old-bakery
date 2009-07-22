@@ -7,7 +7,7 @@ class UsersController extends UsersAppController {
 	}
 	
 	public function login() {
-		if ($this->data) {
+		if ($this->data && $this->Auth->user()) {
 			$this->Access->setRememberCookie($this->data);
 			$this->redirect($this->Auth->redirect());
 		}

@@ -26,13 +26,9 @@ class UserModelTestCase extends CakeTestCase {
 			'fields' => array(
 				'id', 
 				'group_id', 
-				'realname' , 
 				'username' , 
 				'email', 
 				'psword', 
-				'email_authenticated', 
-				'email_token', 
-				'email_token_expires', 
 				'created', 
 				'modified'
 			),
@@ -44,13 +40,9 @@ class UserModelTestCase extends CakeTestCase {
 			'User' => array(
 				'id' => 1, 
 				'group_id' => 100, 
-				'realname' => 'Frank de Graaf', 
 				'username' => 'Phally', 
 				'email' => 'phally@example.com', 
 				'psword' => '86a8c2da8527a1c6978bdca6d7986fe14ae147fe', 
-				'email_authenticated' => true, 
-				'email_token' => null, 
-				'email_token_expires' => null, 
 				'created' => '2009-06-20 03:16:52', 
 				'modified' => '2009-06-20 03:16:56'
 			)
