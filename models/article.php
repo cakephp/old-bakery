@@ -85,6 +85,14 @@ class Article extends AppModel {
 		return $this->save();
 	}
 
+	public function unpublish($id) {
+		$this->set(array(
+			'id' => $id,
+			'published' => 0,
+		));
+		return $this->save();		
+	}
+
 	public function published($id) {
 		return $this->find('count', array('recursive' => -1,'conditions' => array(
 			$this->primaryKey => $id,
