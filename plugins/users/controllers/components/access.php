@@ -148,7 +148,7 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function isAuthorized($group = null, $strict = false) {
-		if (!isset($group)) {
+		if (!isset($group) || !is_numeric($group)) {
 			$group = $this->__auth->user($this->group);
 		}
 		
@@ -159,7 +159,7 @@ class AccessComponent extends Object {
 		$action = $this->params['action'];
 		
 		if (isset($this->__permissions[$controller][$action])) {
-			if ($strict) {
+			if ($strict === true) {
 				return ($group == $this->__permissions[$controller][$action]);
 			} else {
 				return ($group >= $this->__permissions[$controller][$action]);
