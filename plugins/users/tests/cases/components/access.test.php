@@ -60,18 +60,20 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testIsAuthorizedOnNonSignedInUsers() {
-		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/login');
+		$this->Controller->Auth->params = $this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized(
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
-			$this->Controller->Auth->action(':action')	
+			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/logout');
 		$this->assertTrue($this->Controller->Access->isAuthorized(
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
-			$this->Controller->Auth->action(':action')	
+			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
@@ -79,6 +81,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
@@ -86,6 +89,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
@@ -93,6 +97,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
@@ -100,6 +105,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 	}
 	
@@ -111,6 +117,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/logout');
@@ -118,6 +125,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
@@ -125,6 +133,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
@@ -132,6 +141,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
@@ -139,6 +149,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
@@ -146,6 +157,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 	}
 	
@@ -157,6 +169,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 
@@ -165,6 +178,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
@@ -172,6 +186,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
@@ -179,6 +194,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
@@ -186,6 +202,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
@@ -193,6 +210,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 	}
 
@@ -204,6 +222,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/logout');
@@ -211,6 +230,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
@@ -218,6 +238,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
@@ -225,6 +246,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
@@ -232,6 +254,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
@@ -239,6 +262,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 	}
 	
@@ -250,6 +274,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/logout');
@@ -257,6 +282,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
@@ -264,6 +290,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
@@ -271,6 +298,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
@@ -278,6 +306,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 		
 		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
@@ -285,6 +314,7 @@ class AccessComponentTestCase extends CakeTestCase {
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
 			$this->Controller->Auth->action(':action')
+			
 		));
 	}
 	
