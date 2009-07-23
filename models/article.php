@@ -101,13 +101,29 @@ class Article extends AppModel {
 		)));
 	}
 
+	public function undelete($id = null) {
+		if (!empty($id)) {
+            $this->id = $id;
+        }
+        $id = $this->id;
+		if (!$this->exists())
+			return false;
+
+		return $this->save(array(
+				'id' => $id,
+				'deleted' => false,
+				'published' => false,
+				'deleted_date' => null
+			),false);
+	}
+
 	public function delete($id = null, $soft = true) {
 		if (!empty($id)) {
             $this->id = $id;
         }
         $id = $this->id;
 		if (!$this->exists())
-			return null;
+			return false;
 		if ($soft) {
 			return $this->save(array(
 				'id' => $id,

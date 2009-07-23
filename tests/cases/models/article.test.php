@@ -183,9 +183,18 @@ class ArticleTestCase extends CakeTestCase {
 
 		$this->assertTrue($this->Article->published(1), 'Article did not get published : %S');
 
-		$this->assertTrue($this->Article->delete(1), 'Failed to delete article : %s');
+		$this->assertTrue($this->Article->delete(1), 'Failed to softdelete article : %s');
 
 		$this->assertFalse($this->Article->published(1), 'Article deletion did not unpublish : %S');
+
+		$this->assertTrue($this->Article->undelete(1), 'Failed to undelete article : %s');
+
+		$this->assertFalse($this->Article->published(1), 'Article undelete published article : %S');
+		
+		$this->assertTrue($this->Article->delete(1, false), 'Failed to harddelete article : %s');
+
+		$result = $this->Article->find('all');
+		$this->assertTrue(empty($result), 'Article wasnt deleted : %s');
 	}
 
 }
