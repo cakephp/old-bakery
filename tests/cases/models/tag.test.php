@@ -3,7 +3,7 @@
 App::import('Model', 'Tag');
 
 class TagTestCase extends CakeTestCase {
-	public $fixtures = array('app.article_page','app.article_pages_draft','app.article_pages_rev','app.tag','app.article','app.articles_tag','app.user','app.category','app.conversation','app.message','app.rating');
+	public $fixtures = array('app.article_page','app.article_pages_draft','app.article_pages_rev','app.tag','app.article','app.articles_tag','plugin.users.user','app.category','plugin.users.conversation', 'plugin.users.message','app.rating');
 	public $autoFixtures = false;
 	function startTest() {
 		$this->Tag =& ClassRegistry::init('Tag');
