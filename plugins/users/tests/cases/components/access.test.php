@@ -60,7 +60,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testIsAuthorizedOnNonSignedInUsers() {
-		$this->Controller->Auth->params = $this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/login');
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/login');
 		$this->assertTrue($this->Controller->Access->isAuthorized(
 			$this->Controller->Auth->user(),
 			$this->Controller->Auth->action(':controller'),
