@@ -38,7 +38,7 @@ class Article extends AppModel {
 			'className' => 'ArticlePage',
 			'foreignKey' => 'article_id',
 			'dependent' => true,
-			'conditions' => array('pagenum' => 0),
+			'conditions' => array('page_number' => 0),
 			'fields' => array('id','content')
 		)
 	);
@@ -46,7 +46,7 @@ class Article extends AppModel {
 	public $hasMany = array(
 		'ArticlePage' => array(
 			'dependent' => true,
-			'conditions' => array('pagenum !=' => 0)),
+			'conditions' => array('page_number !=' => 0)),
 	//	'Attachment',
 	//	'Comment',
 		'Rating'

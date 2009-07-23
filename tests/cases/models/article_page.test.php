@@ -29,7 +29,7 @@ class ArticlePageTestCase extends CakeTestCase {
 		$this->ArticlePage->create(array('ArticlePage' => array(
 			'article_id' => 1,
 			'title' => 'Background',
-			'pagenum' => 1,
+			'page_number' => 1,
 			'content' => 'first line of code'
 		)));
 		$this->ArticlePage->save();
@@ -38,7 +38,7 @@ class ArticlePageTestCase extends CakeTestCase {
 			'id' => 1,
 			'article_id' => 1,
 			'title' => '',
-			'pagenum' => 1,
+			'page_number' => 1,
 			'content' => ''
 		);
 		$this->assertEqual($result['ArticlePage'],$expected);
@@ -50,7 +50,7 @@ class ArticlePageTestCase extends CakeTestCase {
 			'id' => 1,
 			'article_id' => 1,
 			'title' => 'Background',
-			'pagenum' => 1,
+			'page_number' => 1,
 			'content' => 'first line of code',
 			'draft_id' => 1
 		);
@@ -109,7 +109,7 @@ class ArticlePageTestCase extends CakeTestCase {
 
 		$data = array('Intro' => array(
 			'article_id' => $this->ArticlePage->Article->id,
-			'pagenum' => 0,
+			'page_number' => 0,
 			'content' => 'Introdcution text'
 		));
 		$this->ArticlePage->Article->Intro->create($data);
@@ -117,7 +117,7 @@ class ArticlePageTestCase extends CakeTestCase {
 
 		$data = array('ArticlePage' => array(
 			'article_id' => $this->ArticlePage->Article->id,
-			'pagenum' => 1,
+			'page_number' => 1,
 			'title' => 'Background',
 			'content' => 'A little Background'
 		));
@@ -126,7 +126,7 @@ class ArticlePageTestCase extends CakeTestCase {
 
 		$data = array('ArticlePage' => array(
 			'article_id' => $this->ArticlePage->Article->id,
-			'pagenum' => 2,
+			'page_number' => 2,
 			'title' => 'Code Examples',
 			'content' => 'foBar();'
 		));
@@ -135,7 +135,7 @@ class ArticlePageTestCase extends CakeTestCase {
 
 		$data = array('ArticlePage' => array(
 			'article_id' => $this->ArticlePage->Article->id,
-			'pagenum' => 3,
+			'page_number' => 3,
 			'title' => 'Code',
 			'content' => 'function foBar() {}'
 		));
