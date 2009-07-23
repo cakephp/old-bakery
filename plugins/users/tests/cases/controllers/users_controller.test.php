@@ -104,7 +104,7 @@ class UsersControllerTestCase extends CakeTestCase {
 		
 		$this->assertNull($this->Users->Auth->user());
 		$this->assertNull($this->Users->Access->getRememberCookie());
-		$this->assertEqual($this->Users->redirectUrl, $this->Users->Auth->logoutRedirect);
+		$this->assertEqual($this->Users->redirectUrl, Router::normalize($this->Users->Auth->logoutRedirect));
 	}
 	
 	public function endTest() {
