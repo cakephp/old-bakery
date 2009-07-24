@@ -6,6 +6,7 @@ class ArticlePageTestCase extends CakeTestCase {
 	public $fixtures = array('app.article_page','app.article_pages_draft','app.article_pages_rev','app.tag','app.article','app.articles_tag','plugin.users.user','app.category','plugin.users.conversation', 'plugin.users.message','app.rating');
 	public $autoFixtures = false;
 	private $ArticlePage = null;
+
 	function startTest() {
 		$this->ArticlePage =& ClassRegistry::init('ArticlePage');
 		$this->ArticlePage->recursive = -1;
@@ -58,7 +59,6 @@ class ArticlePageTestCase extends CakeTestCase {
 		$result = $this->ArticlePage->read();
 		$this->assertEqual($result['ArticlePage'],$expected);
 	}
-
 
 	function testEdit() {
 		$this->loadFixtures('ArticlePage','ArticlePagesDraft');
@@ -240,6 +240,138 @@ class ArticlePageTestCase extends CakeTestCase {
 		$this->assertIdentical($this->ArticlePage->ShadowModel->find('count', array('conditions'=> array(
 			'id' => 2))), 3, 'Incorret number of Revisions : %s');
 
+	}
+
+	function testPageRevisioning() {
+		$this->loadFixtures('ArticlePage','ArticlePagesRev','ArticlePagesDraft');
+/*
+		$Article = $this->ArticlePage->Article;
+		$Article->Behaviors->attach('Containable');
+		debug($Article->find('first', array('recursive' => 1,'contain' => array('Intro','ArticlePage'))));
+*/
+		$Page = $this->ArticlePage;
+		$Page->Behaviors->attach('Containable');
+		$Page->bindModel(array(
+			'hasOne' => array(
+				'Draft' => array(
+					'className' => 'ArticlePagesDraft',
+					'foreignKey' => 'id'
+				)
+			),
+			'hasMany' => array(
+				'Revision' => array(
+					'className' => 'ArticlePagesRev',
+					'foreignKey' => 'id',
+					'order' => 'version_created DESC, version_id DESC'
+				)
+			)
+		));
+		$result = $Page->find('first', array(
+			'recursive' => 1,
+			'contain' => array('Draft','Revision')));
+
+		$this->assertFalse(empty($result), 'ArticlePage fixture not loaded : %s');
+		if ($this->skipIf(empty($result),'ArticlePage fixture not loaded')) return;
+		$this->assertIdentical($result['ArticlePage']['title'], 'Page 1 : Lorem ipsum dolor sit amet');
+		$this->assertIdentical($result['Draft']['title'], 'Lorem ipsum dolor sit amet - draft edit');
+		$this->assertIdentical(sizeof($result['Revision']),2,'Incorrect number of revisions : %s');
+		if ($this->skipIf(sizeof($result['Revision']) != 2,'Incorrect number of revisions')) return;
+		$this->assertIdentical($result['Revision'][0]['title'], 'Lorem ipsum dolor sit amet - draft edit');
+		$this->assertIdentical($result['Revision'][1]['title'], 'Page 1 : Lorem ipsum dolor sit amet');
+
+		$Page->save(array('ArticlePage' => array('id' => 1, 'title' => '2nd edit', 'content' => '2nd edit content')));
+
+		$Page->showDraft = true;
+		$Page->createRevision();
+		$Page->showDraft = false;
+
+		sleep(1);
+
+		$result = $Page->find('first', array(
+			'recursive' => 1,
+			'contain' => array('Draft','Revision')));
+		
+		$this->assertIdentical($result['Draft']['title'], '2nd edit');
+		$this->assertIdentical(sizeof($result['Revision']),3,'Incorrect number of revisions : %s');
+		if ($this->skipIf(sizeof($result['Revision']) != 3,'Incorrect number of revisions')) return;
+		$this->assertIdentical($result['Revision'][0]['title'], '2nd edit');
+
+		// User undo's his change before moderator has done anything
+		
+		$Page->id = 1;
+		$Page->undo();
+		$Page->showDraft = true;
+		$Page->createRevision();
+		$Page->showDraft = false;
+
+		$result = $Page->find('first', array(
+			'recursive' => 1,
+			'contain' => array('Draft','Revision')));
+
+		/**
+		 *  Fixture description :
+		 *    - User had created an article with a page
+		 *    - A moderator had published the article (and the page)
+		 *    - User had edited the article page, but it had not been accepted, it was still a "draft"
+		 *
+		 *  Test flow :
+		 *    - (we test fixture situation
+		 *    - User saves a 2nd edit (creating a third revision)
+		 *    - (we test correct situation)
+		 *    - User undoes change with no publishing of the 2nd edit (creating a fourth revision)
+		 *
+		 *  Expected tables situation:
+		 *	  - Original published page still in live table
+		 *    - The original draft from fixture still in draft table
+		 *    - Four revisions in revision table,
+		 *       * original content (from fixture)
+		 *       * draft edit (from fixture)
+		 *       * 2nd edit (from test save above)
+		 *       * draft edit (from undo)
+		 */
+
+		$this->assertIdentical($result['Draft']['title'], 'Lorem ipsum dolor sit amet - draft edit');
+		$this->assertIdentical(sizeof($result['Revision']),4,'Incorrect number of revisions : %s');
+		if ($this->skipIf(sizeof($result['Revision']) != 4,'Incorrect number of revisions')) return;
+		$this->assertIdentical($result['Revision'][0]['title'], 'Lorem ipsum dolor sit amet - draft edit');
+
+		$this->ArticlePage->Behaviors->disable('Revision');
+		$this->assertTrue($this->ArticlePage->acceptDraft(1), 'Accepting draft failed');
+		$this->ArticlePage->Behaviors->enable('Revision');
+
+		$result = $Page->find('first', array(
+			'recursive' => 1,
+			'contain' => array('Draft','Revision')));
+
+		// page published. no longer any draft. 4 revisions
+		$this->assertIdentical($result['ArticlePage']['title'], 'Lorem ipsum dolor sit amet - draft edit');
+		$this->assertTrue(empty($result['Draft']['draft_id']));
+		$this->assertIdentical(sizeof($result['Revision']),4,'Incorrect number of revisions : %s');
+
+		// user makes a 3rd edit
+
+		$Page->save(array('ArticlePage' => array('id' => 1, 'title' => '3rd edit', 'content' => '3rd edit content')));
+
+		$Page->showDraft = true;
+		$Page->createRevision();
+		$Page->showDraft = false;
+
+		sleep(1);
+
+		$result = $Page->find('first', array(
+			'recursive' => 1,
+			'contain' => array('Draft','Revision')));
+
+		debug($result);
+		$this->assertIdentical($result['ArticlePage']['title'], 'Lorem ipsum dolor sit amet - draft edit');
+		$this->assertIdentical($result['Draft']['title'], '3rd edit');
+		$this->assertIdentical(sizeof($result['Revision']),5,'Incorrect number of revisions : %s');
+		if ($this->skipIf(sizeof($result['Revision']) != 5,'Incorrect number of revisions')) return;
+		$this->assertIdentical($result['Revision'][0]['title'], '3rd edit');
+	}
+
+	function getTests() {
+		return array('start','startTest','testPageRevisioning','endTest','end');
 	}
 }
 ?>
