@@ -25,6 +25,7 @@ class MessagingSchema extends CakeSchema {
 		'conversation_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'user_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'message' => array('type' => 'text', 'null' => false, 'default' => NULL),
+		'new' => array('type' => 'boolean', 'null' => false, 'default' => true),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => NULL),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'fk_messages_conversations' => array('column' => 'conversation_id', 'unique' => 0), 'fk_messages_temps1' => array('column' => 'user_id', 'unique' => 0))
