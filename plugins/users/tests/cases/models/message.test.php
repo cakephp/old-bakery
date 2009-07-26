@@ -9,6 +9,7 @@ class MessageTestCase extends CakeTestCase {
 
 	public function startTest() {
 		$this->Message =& ClassRegistry::init('Message');
+		$this->Message->recursive = -1;
 	}
 
 	public function testMessageInstance() {
@@ -16,7 +17,6 @@ class MessageTestCase extends CakeTestCase {
 	}
 
 	public function testMessageFind() {
-		$this->Message->recursive = -1;
 		$results = $this->Message->find('first');
 		$this->assertTrue(!empty($results));
 
@@ -25,6 +25,7 @@ class MessageTestCase extends CakeTestCase {
 			'conversation_id'  => 1,
 			'user_id'  => 6,
 			'message'  => 'I am experiencing glitches when publishing an article. Can you please look at this?',
+			'new'  => false,
 			'created'  => '2009-07-19 00:22:59',
 			'modified'  => '2009-07-19 00:22:59'
 		));
