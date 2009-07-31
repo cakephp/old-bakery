@@ -1,5 +1,5 @@
 <?php
-class Conversation extends AppModel {
+class Conversation extends UsersAppModel {
 	public $useDbConfig = 'user_plug';
 	
 	public $belongsTo = array(
