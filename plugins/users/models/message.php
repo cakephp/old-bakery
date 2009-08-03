@@ -7,10 +7,25 @@ class Message extends UsersAppModel {
 		'Users.User'
 	);
 	
+	public $validate = array(
+		'message' => array(
+			'notempty' => array(
+				'rule' => array('notEmpty'),
+				'message' => 'Please enter a message.'
+			)
+		)
+	);
+	
 	public function send($message = null, $recipients = array(), $sender = null, $title = null, $conversationId = null) {
+		$data = array();
+		
+		$data[$this->alias] = array(
+			'user_id' => $sender,
+			'message' => $message
+		);
+		
 		if ($conversationId && !is_array($recipients)) {
-			
-			$conversation = $this->Conversation->find('first', array(
+			$conversation = $this->Conversation->find('count', array(
 				'conditions' => array(
 					$this->Conversation->primaryKey => $conversationId,
 					'sender_id' => array($recipients, $sender),
@@ -18,45 +33,34 @@ class Message extends UsersAppModel {
 				)
 			));
 			
-			if ($conversation) {
-			
-				$this->create(array(
-					$this->alias => array(
-						'conversation_id' => $conversationId,
-						'user_id' => $recipients,
-						'message' => $message
-					)
-				));
-				return $this->save();
-				
-			} else {
-			
-				return false;
-				
+			if ($conversation > 0) {
+				$data[$this->alias]['conversation_id'] = $conversationId;
 			}
-			
+		}
+
+		if (!isset($data[$this->alias]['conversation_id'])) {
+			$data[$this->Conversation->alias] = array(
+				'sender_id' => $sender,
+				'title' => $title,
+			);
 		}
 		
-		$recipients = is_array($recipients) ? $recipients : array($recipients);
+		$this->set($data);
+		$this->Conversation->set($data);
+		$invalid = (!$this->validates() || !$this->Conversation->validates());
 		
-		// Todo, place validation outside the loop and return a proper value.
-		
-		foreach($recipients as $recipient) {
-			$this->saveAll(array(
-				$this->Conversation->alias => array(
-					'sender_id' => $sender,
-					'recipient_id' => $recipient,
-					'title' => $title,
-				),
-				$this->alias => array(
-					'conversation_id' => $conversationId,
-					'user_id' => $recipient,
-					'message' => $message
-				)
-			), array('validate' => 'first'));
+		if (!$invalid) {
+			if (isset($data[$this->alias]['conversation_id'])) {
+				$this->save($data, false);
+			} else {
+				$recipients = is_array($recipients) ? $recipients : array($recipients);
+				foreach($recipients as $recipient) {
+					$data[$this->Conversation->alias]['recipient_id'] = $recipient;
+					$this->saveAll($data, array('validate' => false));
+				}
+			}
 		}
-		
-		return true;
+		return !$invalid;
 	}
 }
 ?>

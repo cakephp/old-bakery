@@ -1,78 +1,1 @@
-<?php 
-/* SVN FILE: $Id$ */
-/* Message Test cases generated on: 2009-07-19 00:22:59 : 1247955779*/
-App::import('Model', 'Users.Message');
-
-class MessageTestCase extends CakeTestCase {
-	public $Message = null;
-	public $fixtures = array('plugin.users.message', 'plugin.users.conversation', 'plugin.users.user');
-
-	public function startTest() {
-		$this->Message =& ClassRegistry::init('Message');
-		$this->Message->recursive = -1;
-	}
-
-	public function testMessageInstance() {
-		$this->assertTrue(is_a($this->Message, 'Message'));
-	}
-
-	public function testMessageFind() {
-		$results = $this->Message->find('first');
-		$this->assertTrue(!empty($results));
-
-		$expected = array('Message' => array(
-			'id'  => 1,
-			'conversation_id'  => 1,
-			'user_id'  => 6,
-			'message'  => 'I am experiencing glitches when publishing an article. Can you please look at this?',
-			'new'  => false,
-			'created'  => '2009-07-19 00:22:59',
-			'modified'  => '2009-07-19 00:22:59'
-		));
-		$this->assertEqual($results, $expected);
-	}
-	
-	public function testSendToExistingConversation() {
-		$this->assertTrue($this->Message->send('Hello there!', 6, 1, null, 1));
-	}
-	
-	public function testSendToNewConversationWithOneRecipient() {
-		$this->assertTrue($this->Message->send('Hello there!', 2, 3, 'The subject...'));
-		$result = $this->Message->find('first', array(
-			'fields' => array(
-				'user_id',
-				'message',
-				'new'
-			),
-			'conditions' => array(
-				'user_id' => 2,
-				'message' => 'Hello there!'
-			),
-			'contain' => array(
-				'Conversation' => array(
-					'fields' => array(
-						'sender_id',
-						'recipient_id',
-						'title'
-					)
-				)
-			)
-		));
-		$expected = array(
-			'Message' => array(
-				'user_id' => 2,
-				'message' => 'Hello there!',
-				'new' => true
-			),
-			'Conversation' => array(
-				'sender_id' => 3,
-				'recipient_id' => 2,
-				'title' => 'The subject...',
-				'id' => 5
-			)
-		);
-		$this->assertEqual($result, $expected);
-		
-	}
-}
-?>
+<?php App::import('Model', 'Users.Message');class MessageTestCase extends CakeTestCase {	public $Message = null;	public $fixtures = array('plugin.users.message', 'plugin.users.conversation', 'plugin.users.user');	public function startTest() {		$this->Message =& ClassRegistry::init('Message');		$this->Message->recursive = -1;	}	public function testMessageInstance() {		$this->assertIsA($this->Message, 'Message', 'Model instance present');	}	public function testMessageFind() {		$results = $this->Message->find('first');		$this->assertTrue(!empty($results), 'First record retreived');		$expected = array('Message' => array(			'id'  => 1,			'conversation_id'  => 1,			'user_id'  => 6,			'message'  => 'I am experiencing glitches when publishing an article. Can you please look at this?',			'new'  => false,			'created'  => '2009-07-19 00:22:59',			'modified'  => '2009-07-19 00:22:59'		));		$this->assertEqual($results, $expected, 'First record matches');	}			public function testSendingInvalidMessages() {		$valid = $this->Message->send('', 6, 1, null, 1) ? true : false;		$this->assertFalse($valid, 'Empty message intercepted');		$this->assertEqual($this->Message->find('count', array('conditions' => array('Message.message' => ''))), 0, 'No empty messages inserted');	}		public function testSendToExistingConversation() {		$valid = $this->Message->send('Hello there!', 6, 1, null, 1) ? true : false;		$this->assertTrue($valid, 'No validation errors');				$result = $this->Message->find('first', array(			'fields' => array(				'user_id',				'message',				'new'			),			'conditions' => array(				'user_id' => 1,				'message' => 'Hello there!'			),			'contain' => array(				'Conversation' => array(					'fields' => array(						'sender_id',						'recipient_id',						'title'					)				)			)		));		$expected = array(			'Message' => array(				'user_id' => 1,				'message' => 'Hello there!',				'new' => true			),			'Conversation' => array(				'sender_id'  => 6,				'recipient_id'  => 1,				'title'  => 'Problems with publishing.',				'id' => 1			)		);		$this->assertEqual($result, $expected, 'Message actually saved');	}		public function testSendToNewConversationWithOneRecipient() {		$valid = $this->Message->send('Hello there!', 2, 3, 'The subject...') ? true : false;		$this->assertTrue($valid, 'No validation errors');		$result = $this->Message->find('first', array(			'fields' => array(				'user_id',				'message',				'new'			),			'conditions' => array(				'user_id' => 3,				'message' => 'Hello there!'			),			'contain' => array(				'Conversation' => array(					'fields' => array(						'sender_id',						'recipient_id',						'title'					)				)			)		));		$expected = array(			'Message' => array(				'user_id' => 3,				'message' => 'Hello there!',				'new' => true			),			'Conversation' => array(				'sender_id' => 3,				'recipient_id' => 2,				'title' => 'The subject...',				'id' => 5			)		);		$this->assertEqual($result, $expected, 'Message and conversation actually saved');			}		public function testSendToNewConversationWithMultipleRecipients() {		$valid = $this->Message->send('Multiple recipients!', array(1, 2, 4), 3, 'The multiple subject...') ? true : false;		$this->assertTrue($valid, 'No validation errors');				$result = $this->Message->find('all', array(			'fields' => array(				'user_id',				'message',				'new'			),			'conditions' => array(				'user_id' => 3,				'message' => 'Multiple recipients!'			),			'contain' => array(				'Conversation' => array(					'fields' => array(						'sender_id',						'recipient_id',						'title'					)				)			)		));		$expected = array(			array(				'Message' => array(					'user_id' => 3,					'message' => 'Multiple recipients!',					'new' => true				),				'Conversation' => array(					'sender_id' => 3,					'recipient_id' => 1,					'title' => 'The multiple subject...',					'id' => 5				)			),			array(				'Message' => array(					'user_id' => 3,					'message' => 'Multiple recipients!',					'new' => true				),				'Conversation' => array(					'sender_id' => 3,					'recipient_id' => 2,					'title' => 'The multiple subject...',					'id' => 6				)			),			array(				'Message' => array(					'user_id' => 3,					'message' => 'Multiple recipients!',					'new' => true				),				'Conversation' => array(					'sender_id' => 3,					'recipient_id' => 4,					'title' => 'The multiple subject...',					'id' => 7				)			),					);		$this->assertEqual($result, $expected, 'Multiple messages and conversations actually saved');			}}?>
