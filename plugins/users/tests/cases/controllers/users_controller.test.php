@@ -4,9 +4,14 @@ class TestUsersController extends UsersController {
 	public $redirectUrl = null;
 	public $renderedAction = null;
 	public $stopped = null;
+	public $uses = 'User';
 	
 	public $autoRender = false;
-	public $uses = 'User';
+	
+	public function beforeFilter() {
+		parent::beforeFilter();
+		$this->Auth->fields = array('username' => 'username', 'password' => 'password');
+	}
 	
 	public function redirect($url, $status = null, $exit = true) {
 		$this->redirectUrl = $url;
@@ -23,7 +28,7 @@ class TestUsersController extends UsersController {
 
 class UsersControllerTestCase extends CakeTestCase {
 	private $Users = null;
-	public $fixtures = array('plugin.users.user', 'plugin.users.message', 'plugin.users.conversation');
+	public $fixtures = array('plugin.users.user', 'plugin.users.message', 'plugin.users.conversation', 'plugin.users.conversations_user');
 	
 	public function startTest() {
 		$this->Users = new TestUsersController();
@@ -36,7 +41,6 @@ class UsersControllerTestCase extends CakeTestCase {
 	}
 	
 	public function testLoginActionWithValidUser() {
-		$this->Users->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Users->data = array(
 			$this->Users->Auth->userModel => array(
 				$this->Users->Auth->fields['username'] => 'Phally',
@@ -66,7 +70,6 @@ class UsersControllerTestCase extends CakeTestCase {
 	}
 	
 	public function testLoginActionWithoutValidUser() {
-		$this->Users->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Users->data = array(
 			$this->Users->Auth->userModel => array(
 				$this->Users->Auth->fields['username'] => 'Phally',

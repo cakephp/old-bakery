@@ -1,6 +1,6 @@
 <?php
 class UserModelTestCase extends CakeTestCase {
-	public $fixtures = array('plugin.users.user', 'plugin.users.conversation', 'plugin.users.message');
+	public $fixtures = array('plugin.users.user', 'plugin.users.conversation', 'plugin.users.message', 'plugin.users.conversations_user');
 	
 	private $User = null;
 	
@@ -28,7 +28,7 @@ class UserModelTestCase extends CakeTestCase {
 				'group_id', 
 				'username' , 
 				'email', 
-				'psword', 
+				'password', 
 				'created', 
 				'modified'
 			),
@@ -42,7 +42,7 @@ class UserModelTestCase extends CakeTestCase {
 				'group_id' => 100, 
 				'username' => 'Phally', 
 				'email' => 'phally@example.com', 
-				'psword' => '86a8c2da8527a1c6978bdca6d7986fe14ae147fe', 
+				'password' => '86a8c2da8527a1c6978bdca6d7986fe14ae147fe', 
 				'created' => '2009-06-20 03:16:52', 
 				'modified' => '2009-06-20 03:16:56'
 			)

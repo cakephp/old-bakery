@@ -1,6 +1,6 @@
 <?php
 class Message extends UsersAppModel {
-	public $useDbConfig = 'user_plug';
+	public $useDbConfig = 'users_plugin';
 	
 	public $belongsTo = array(
 		'Users.Conversation', 
