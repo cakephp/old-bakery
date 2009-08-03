@@ -50,7 +50,15 @@ class Message extends UsersAppModel {
 		if (!$invalid) {
 			if (isset($data[$this->alias]['conversation_id'])) {
 				$this->save($data, false);
-				// todo: updateAll to set new for all joined users.
+				$this->Conversation->ConversationsUser->updateAll(
+					array(
+						'new' => true
+					), 
+					array(
+						'ConversationsUser.conversation_id' => $data[$this->alias]['conversation_id'], 
+						'ConversationsUser.user_id != ' => $sender
+					)
+				);
 			} else {
 				$recipients = is_array($recipients) ? $recipients : array($recipients);
 				foreach($recipients as $recipient) {
