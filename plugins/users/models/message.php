@@ -25,11 +25,10 @@ class Message extends UsersAppModel {
 		);
 		
 		if ($conversationId && !is_array($recipients)) {
-			$conversation = $this->Conversation->find('count', array(
+			$conversation = $this->Conversation->ConversationsUser->find('count', array(
 				'conditions' => array(
-					$this->Conversation->primaryKey => $conversationId,
-					'sender_id' => array($recipients, $sender),
-					'recipient_id' => array($recipients, $sender)
+					'conversation_id' => $conversationId,
+					'user_id' => $sender,
 				)
 			));
 			
@@ -40,7 +39,6 @@ class Message extends UsersAppModel {
 
 		if (!isset($data[$this->alias]['conversation_id'])) {
 			$data[$this->Conversation->alias] = array(
-				'sender_id' => $sender,
 				'title' => $title,
 			);
 		}
@@ -52,6 +50,7 @@ class Message extends UsersAppModel {
 		if (!$invalid) {
 			if (isset($data[$this->alias]['conversation_id'])) {
 				$this->save($data, false);
+				// todo: updateAll to set new for all joined users.
 			} else {
 				$recipients = is_array($recipients) ? $recipients : array($recipients);
 				foreach($recipients as $recipient) {
