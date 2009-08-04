@@ -15,14 +15,17 @@ class Conversation extends UsersAppModel {
 		)
 	);
 	
-	public $hasAndBelongsToMany = array(
-		'Users.User' => array(
+	/*public $hasAndBelongsToMany = array(
+		'User' => array(
+			'className' => 'Users.User',
 			'with' => 'Users.ConversationsUser',
 		)
 	);
+	*/
 
 	public $hasMany = array(
-		'Users.Message'
+		'Users.Message',
+		'Users.ConversationsUser'
 	);
 
 }

@@ -4,7 +4,7 @@ class TestMessagesController extends MessagesController {
 	public $redirectUrl = null;
 	public $renderedAction = null;
 	public $stopped = null;
-	public $uses = 'Message';
+	public $uses = 'Users.Message';
 	
 	public $autoRender = false;
 	

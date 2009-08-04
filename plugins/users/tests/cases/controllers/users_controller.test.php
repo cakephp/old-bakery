@@ -4,7 +4,7 @@ class TestUsersController extends UsersController {
 	public $redirectUrl = null;
 	public $renderedAction = null;
 	public $stopped = null;
-	public $uses = 'User';
+	public $uses = 'Users.User';
 	
 	public $autoRender = false;
 	

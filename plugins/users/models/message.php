@@ -18,6 +18,7 @@ class Message extends UsersAppModel {
 	
 	public function send($message = null, $recipients = array(), $sender = null, $title = null, $conversationId = null) {
 		$data = array();
+		$this->id = null;
 		
 		$data[$this->alias] = array(
 			'user_id' => $sender,
@@ -64,9 +65,16 @@ class Message extends UsersAppModel {
 				);
 			} else {
 				$recipients = is_array($recipients) ? $recipients : array($recipients);
+				$message = $data['Message'];
+				unset($data['Message']);
+				$data['Message'][0] = $message;
 				foreach($recipients as $recipient) {
 					$data[$this->Conversation->alias]['recipient_id'] = $recipient;
-					$this->saveAll($data, array('validate' => false));
+					$data[$this->Conversation->ConversationsUser->alias]= array(
+						array('user_id' => $sender), 
+						array('user_id' => $recipient)
+					);
+					$this->Conversation->saveAll($data, array('validate' => false));
 				}
 			}
 		}
