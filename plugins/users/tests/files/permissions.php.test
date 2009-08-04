@@ -6,6 +6,9 @@ $config['App']['permissions'] = array(
 	'delete'         => 100,
 	'index'          => 0
     ),
+    'Users.Messages' => array(
+        'send'           => 10,
+    ),
     'Comments' => array(
         'add'            => 10,
         'move'           => 50

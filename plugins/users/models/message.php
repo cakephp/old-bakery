@@ -45,7 +45,10 @@ class Message extends UsersAppModel {
 		
 		$this->set($data);
 		$this->Conversation->set($data);
-		$invalid = (!$this->validates() || !$this->Conversation->validates());
+		$validConversation = $this->Conversation->validates();
+		$validMessage = $this->validates();
+		
+		$invalid = (!$validConversation || !$validMessage);
 		
 		if (!$invalid) {
 			if (isset($data[$this->alias]['conversation_id'])) {
