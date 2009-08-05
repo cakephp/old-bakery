@@ -14,7 +14,7 @@ class AccessComponentTestCase extends CakeTestCase {
 	private $Controller = null;
 	private $config = 'test_suite_permissions.php';
 	
-	public $fixtures = array('plugin.users.user', 'plugin.users.message', 'plugin.users.conversation');
+	public $fixtures = array('plugin.users.user', 'plugin.users.message', 'plugin.users.conversation', 'plugin.users.conversations_user');
 	
 		
 	public function startCase() {
@@ -31,11 +31,12 @@ class AccessComponentTestCase extends CakeTestCase {
 	
 	public function startTest() {
 		$this->Controller = new FakeTestController();
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/');
 		$this->Controller->constructClasses();
 		$this->Controller->beforeFilter();
-		$this->Controller->params = Router::parse('/');
 		$this->Controller->Session->delete('Auth.User');
-		$this->Controller->Access->initialize($this->Controller);
+		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->Component->startup($this->Controller);
 	}
 	
 	public function testInstances() {
@@ -55,116 +56,266 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testPassingAuthFields() {
-		$this->Controller->Access->startup($this->Controller);
 		$this->assertEqual($this->Controller->viewVars['authFields'], $this->Controller->Auth->fields);
 	}
 	
 	public function testIsAuthorizedOnNonSignedInUsers() {
-		$this->Controller->params = Router::parse('/users/users/login');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
-
-		$this->Controller->params = Router::parse('/users/users/logout');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/login');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/users/users/delete');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/logout');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/add');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/move');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/not/existing');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
+		
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 	}
 	
 	public function testIsAuthorizedOnMemberUsers() {
 		$this->Controller->Session->write('Auth.User.group_id', 10);
 		
-		$this->Controller->params = Router::parse('/users/users/login');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
-
-		$this->Controller->params = Router::parse('/users/users/logout');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/login');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/users/users/delete');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/logout');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/add');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/move');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/not/existing');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
+		
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 	}
 	
 	public function testIsAuthorizedOnModeratorUsers() {
 		$this->Controller->Session->write('Auth.User.group_id', 50);
 		
-		$this->Controller->params = Router::parse('/users/users/login');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/login');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
+		
 
-		$this->Controller->params = Router::parse('/users/users/logout');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/logout');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/users/users/delete');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/add');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/move');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/not/existing');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 	}
 
 	public function testIsAuthorizedOnCoreDevUsers() {
 		$this->Controller->Session->write('Auth.User.group_id', 80);
 		
-		$this->Controller->params = Router::parse('/users/users/login');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/login');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 
-		$this->Controller->params = Router::parse('/users/users/logout');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/logout');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/users/users/delete');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/add');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/move');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/not/existing');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 	}
 	
 	public function testIsAuthorizedOnAdministratorUsers() {
 		$this->Controller->Session->write('Auth.User.group_id', 100);
 		
-		$this->Controller->params = Router::parse('/users/users/login');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/login');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 
-		$this->Controller->params = Router::parse('/users/users/logout');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/logout');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/users/users/delete');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/users/users/delete');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/add');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/add');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/comments/move');
-		$this->assertTrue($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/comments/move');
+		$this->assertTrue($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 		
-		$this->Controller->params = Router::parse('/not/existing');
-		$this->assertFalse($this->Controller->Access->isAuthorized());
+		$this->Controller->Auth->params = $this->Controller->params = Router::parse('/not/existing');
+		$this->assertFalse($this->Controller->Access->isAuthorized(
+			$this->Controller->Auth->user(),
+			$this->Controller->Auth->action(':controller'),
+			$this->Controller->Auth->action(':action')
+			
+		));
 	}
 	
 	public function testHashPasswordsWithDefaultFields() {
@@ -240,7 +391,6 @@ class AccessComponentTestCase extends CakeTestCase {
 		$mode = Configure::read('debug');
 		Configure::write('debug', 1);
 		
-		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Controller->Access->lazyLogin('Phally');
 		
 		$this->assertEqual($this->Controller->Auth->user('id'), 1);
@@ -253,7 +403,6 @@ class AccessComponentTestCase extends CakeTestCase {
 	public function testLazyLoginInProductionMode() {
 		$mode = Configure::read('debug');
 		Configure::write('debug', 0);
-		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Controller->Access->lazyLogin('Phally');
 		
 		$this->assertNull($this->Controller->Auth->user());
@@ -264,7 +413,6 @@ class AccessComponentTestCase extends CakeTestCase {
 	public function testLazyLoginWithSignedInUser() {
 		$mode = Configure::read('debug');
 		Configure::write('debug', 1);
-		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		
 		$user = ClassRegistry::init('Users.User')->find('first', array('conditions' => array('username' => 'coredev')));
 		$this->Controller->Auth->login($user);
@@ -323,7 +471,6 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testSetRememberCookieWithRememberValueAndLogin() {
-		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Controller->Access->lazyLogin('Phally');
 		
 		$data = array(
@@ -359,7 +506,6 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testGetRememberCookie() {
-		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Controller->Access->lazyLogin('Phally');
 		
 		$result = $this->Controller->Access->getRememberCookie();
@@ -385,7 +531,6 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testDeleteRememberCookie() {
-		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Controller->Access->lazyLogin('Phally');
 		
 		$data = array(
@@ -418,7 +563,6 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testCookieLoginWithoutCookieAndWithLoggedInUser() {
-		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		$this->Controller->Access->lazyLogin('Phally');
 		
 		$this->Controller->Access->cookieLogin();
@@ -428,7 +572,6 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testCookieLoginWithCookieAndWithoutLoggedInUser() {
-		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
 		
 		$data = array(
 			$this->Controller->Auth->userModel => array(
@@ -449,8 +592,6 @@ class AccessComponentTestCase extends CakeTestCase {
 	}
 	
 	public function testCookieLoginWithCookieAndLoggedInUser() {
-		$this->Controller->Auth->fields = array('username' => 'username', 'password' => 'psword');
-		
 		$data = array(
 			$this->Controller->Auth->userModel => array(
 				$this->Controller->Auth->fields['username'] => 'Phally',

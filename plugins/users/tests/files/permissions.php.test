@@ -3,7 +3,11 @@ $config['App']['permissions'] = array(
     'Users.Users' => array(
         'login'          => 0,
         'logout'         => 0,
-	'delete'         => 100
+	'delete'         => 100,
+	'index'          => 0
+    ),
+    'Users.Messages' => array(
+        'send'           => 10,
     ),
     'Comments' => array(
         'add'            => 10,

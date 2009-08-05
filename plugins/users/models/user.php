@@ -1,17 +1,16 @@
 <?php
 class User extends UsersAppModel {
-	public $useDbConfig = 'user_plug';
+	public $useDbConfig = 'users_plugin';
 	public $displayField = 'username';
+	
+	public $hasAndBelongsToMany = array(
+		'Users.Conversation' => array(
+			'with' => 'Users.ConversationsUser'
+		)
+	);
+	
 	public $hasMany = array(
-		'StartedConversation' => array(
-			'className' => 'Conversation',
-			'foreignKey' => 'sender_id'
-		),
-		'ReceivedConversation' => array(
-			'className' => 'Conversation',
-			'foreignKey' => 'recipient_id'
-		),
-		'Messages'
+		'Users.Message'
 	);
 }
 ?>

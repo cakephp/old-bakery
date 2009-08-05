@@ -1,7 +1,4 @@
 <?php 
-/* SVN FILE: $Id$ */
-/* Message Fixture generated on: 2009-07-19 00:22:59 : 1247955779*/
-
 class MessageFixture extends CakeTestFixture {
 	public $table = 'messages';
 	public $fields = array(
