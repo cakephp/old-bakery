@@ -16,6 +16,7 @@ class MessagesController extends UsersAppController {
 			
 			if ($this->Messaging->send($message, $recipient, $sender, $title)) {
 				$this->Session->setFlash(__('Your message has been sent', true));
+				$this->redirect(array('plugin' => 'users', 'controller' => 'users', 'action' => 'index'));
 			}
 		}
 		
