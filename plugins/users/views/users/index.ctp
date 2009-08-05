@@ -26,7 +26,7 @@
 			<td><?php echo $user['User']['username']; ?></td>
 			<td><?php echo $user['User']['last_login']; ?></td>
 			<td><?php echo $user['User']['created']; ?></td>
-			<td>Send message (not yet implemented)</td>
+			<td><?php echo $html->link(__('Send message', true), array('plugin' => 'users', 'controller' => 'messages', 'action' => 'send', $user['User']['id'])); ?></td>
 		</tr>
 		<?php endforeach; ?>
 	</table>
