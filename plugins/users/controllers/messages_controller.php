@@ -9,8 +9,9 @@ class MessagesController extends UsersAppController {
 		}
 		
 		if ($this->data) {
-			$message = $this->data['Message']['message'];
-			$title = $this->data['Conversation']['title'];
+			App::import('Core', 'Sanitize');
+			$message = Sanitize::clean($this->data['Message']['message']);
+			$title = Sanitize::clean($this->data['Conversation']['title']);
 			$recipient = $user_id;
 			$sender = $this->Auth->user('id');
 			
