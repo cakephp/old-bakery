@@ -74,7 +74,7 @@ class Message extends UsersAppModel {
 						array('user_id' => $recipient)
 					);
 					
-					if ($sender) {
+					if ($sender && $sender != $recipient) {
 						$data[$this->Conversation->ConversationsUser->alias][] = array('user_id' => $sender);
 					}
 					
