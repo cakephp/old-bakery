@@ -79,7 +79,100 @@ class ConversationsControllerTestCase extends CakeTestCase {
 			)		
 		);
 		
-		$this->assertEqual($this->Conversations->viewVars['conversations'], $expected);
+		$this->assertEqual($this->Conversations->viewVars['conversations'], $expected, 'Conversation list passed correctly');
+	}
+	
+	public function testShowActionWithoutParameter() {
+		$url = '/users/conversations/show';
+		$this->Conversations->params = array_merge(Router::parse($url), array('url' => array('url' => $url)));
+		
+		$this->Conversations->Component->initialize($this->Conversations);
+		
+		$this->Conversations->beforeFilter();
+		$this->Conversations->Access->lazyLogin('Phally');
+		$this->Conversations->Component->startup($this->Conversations);
+		$this->assertNull($this->Conversations->redirectUrl, 'No redirects by Auth, user is logged in and has permission');
+		
+		$this->Conversations->show();
+		
+		$this->assertEqual($this->Conversations->redirectUrl, array('plugin' => 'users', 'controller' => 'conversations', 'action' => 'index'), 'User redirected to mailbox');
+		$this->assertEqual($this->Conversations->Session->read('Message.flash.message'), __('Select a valid conversation to read.', true), 'User notified about missing parameter');
+	}
+	
+	public function testShowActionWithInvalidParameter() {
+		$url = '/users/conversations/show/1';
+		$this->Conversations->params = array_merge(Router::parse($url), array('url' => array('url' => $url)));
+		
+		$this->Conversations->Component->initialize($this->Conversations);
+		
+		$this->Conversations->beforeFilter();
+		$this->Conversations->Access->lazyLogin('Registered');
+		$this->Conversations->Component->startup($this->Conversations);
+		$this->assertNull($this->Conversations->redirectUrl, 'No redirects by Auth, user is logged in and has permission');
+		
+		$this->Conversations->show(1);
+		
+		$this->assertEqual($this->Conversations->redirectUrl, array('plugin' => 'users', 'controller' => 'conversations', 'action' => 'index'), 'User redirected to mailbox');
+		$this->assertEqual($this->Conversations->Session->read('Message.flash.message'), __('Select a valid conversation to read.', true), 'User notified about invalid parameter');
+	}
+	
+	public function testShowActionWithValidParameter() {
+		$url = '/users/conversations/show/2';
+		$this->Conversations->params = array_merge(Router::parse($url), array('url' => array('url' => $url)));
+		
+		$this->Conversations->Component->initialize($this->Conversations);
+		
+		$this->Conversations->beforeFilter();
+		$this->Conversations->Access->lazyLogin('Phally');
+		$this->Conversations->Component->startup($this->Conversations);
+		$this->assertNull($this->Conversations->redirectUrl, 'No redirects by Auth, user is logged in and has permission');
+		
+		$this->Conversations->show(2);
+		
+		$this->assertNull($this->Conversations->redirectUrl, 'No redirects for invalid ids');
+		
+		$expected = array(
+			'ConversationsUser' => array(
+				'id' => 3,
+				'conversation_id' => 2,
+				'user_id' => 1
+			),
+			'Conversation' => array(
+				'id' => 2,
+				'title' => 'Problems with spammers.'
+			)
+		);
+		$this->assertEqual($this->Conversations->viewVars['conversation'], $expected, '$conversation passed correctly');
+		
+		$expected = array(
+			0 => array(
+				'Message' => array(
+					'id' => 6,
+					'conversation_id' => 2,
+					'user_id' => 6,
+					'message' => 'Yo dude, there are like 8000 spammers on the Bakery... Do something about it!',
+					'created' => '2009-07-19 00:34:59'
+				),
+				'User' => array(
+					'id' => 6,
+					'username' => 'moddy'
+				)
+			),
+			1 => array(
+				'Message' => array(
+					'id' => 7,
+					'conversation_id' => 2,
+					'user_id' => 1,
+					'message' => 'Yeah, that was me testing something. Sorry.',
+					'created' => '2009-07-19 00:35:59'
+				),
+				'User' => array(
+					'id' => 1,
+					'username' => 'Phally'
+				)
+			)
+		);
+		$this->assertEqual($this->Conversations->viewVars['messages'], $expected, '$messages passed correctly');
 	}
 	
 	public function endTest() {
