@@ -71,11 +71,17 @@ class Message extends UsersAppModel {
 				foreach($recipients as $recipient) {
 					
 					$data[$this->Conversation->ConversationsUser->alias]= array(
-						array('user_id' => $recipient)
+						array(
+							'user_id' => $recipient,
+							'new' => true
+						)
 					);
 					
 					if ($sender && $sender != $recipient) {
-						$data[$this->Conversation->ConversationsUser->alias][] = array('user_id' => $sender);
+						$data[$this->Conversation->ConversationsUser->alias][] = array(
+							'user_id' => $sender,
+							'new' => false
+						);
 					}
 					
 					$this->Conversation->saveAll($data, array('validate' => false));
