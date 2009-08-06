@@ -133,7 +133,7 @@ class MessagesControllerTestCase extends CakeTestCase {
 		$this->assertNull($this->Messages->redirectUrl, 'No redirects by Auth, user is logged in and has permission');
 		$this->Messages->send();
 		
-		$this->assertEqual($this->Messages->redirectUrl, array('plugin' => 'users', 'controller' => 'users', 'action' => 'index'), 'Redirected to memberlist after succesful sending');
+		$this->assertEqual($this->Messages->redirectUrl, array('plugin' => 'users', 'controller' => 'conversations', 'action' => 'show', 1), 'Redirected to existing conversation after succesful sending');
 		$this->assertEqual($this->Messages->Session->read('Message.flash.message'), 'Your message has been sent', 'Send confirmation message set');
 	}
 	
