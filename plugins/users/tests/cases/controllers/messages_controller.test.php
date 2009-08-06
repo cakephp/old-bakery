@@ -112,6 +112,31 @@ class MessagesControllerTestCase extends CakeTestCase {
 		$this->assertEqual($this->Messages->redirectUrl, array('plugin' => 'users', 'controller' => 'users', 'action' => 'index'), 'Redirected to memberlist after succesful sending');
 	}
 	
+	public function testSendActionWithConversationParamAndValidData() {
+		$url = '/users/messages/send/conversation:1';
+		$this->Messages->params = array_merge(Router::parse($url), array('url' => array('url' => $url)));
+		
+		$this->Messages->data = array(
+			'Conversation' => array(
+				'title' => 'Answer!'
+			),
+			'Message' => array(
+				'message' => 'It works just fine.'
+			)
+		);
+		
+		$this->Messages->Component->initialize($this->Messages);
+		
+		$this->Messages->beforeFilter();
+		$this->Messages->Access->lazyLogin('Phally');
+		$this->Messages->Component->startup($this->Messages);
+		$this->assertNull($this->Messages->redirectUrl, 'No redirects by Auth, user is logged in and has permission');
+		$this->Messages->send();
+		
+		$this->assertEqual($this->Messages->redirectUrl, array('plugin' => 'users', 'controller' => 'users', 'action' => 'index'), 'Redirected to memberlist after succesful sending');
+		$this->assertEqual($this->Messages->Session->read('Message.flash.message'), 'Your message has been sent', 'Send confirmation message set');
+	}
+	
 	public function testSendActionWithRecipientAndInvalidData() {
 		$url = '/users/messages/send/2';
 		$this->Messages->params = array_merge(Router::parse($url), array('url' => array('url' => $url)));

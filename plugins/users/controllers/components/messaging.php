@@ -5,7 +5,7 @@ class MessagingComponent extends Object {
 	private $__modelInstance = null;
 	
 	public function send($message = null, $recipients = array(), $sender = null, $title = null, $conversationId = null) {
-		return $this->__getModel()->send($message, $recipients, $sender, $title);
+		return $this->__getModel()->send($message, $recipients, $sender, $title, $conversationId);
 	}
 	
 	private function __getModel() {
