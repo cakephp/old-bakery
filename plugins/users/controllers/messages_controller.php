@@ -4,8 +4,8 @@ class MessagesController extends UsersAppController {
 	public $components = array('Users.Messaging');
 
 	public function send($user_id = null) {
-		if (!$user_id) {
-			$this->redirect(array('controller' => 'users', 'action' => 'index'));
+		if (!$user_id || $user_id == $this->Auth->user('id')) {
+			$this->redirect(array('plugin' => 'users', 'controller' => 'users', 'action' => 'index'));
 		}
 		
 		if ($this->data) {

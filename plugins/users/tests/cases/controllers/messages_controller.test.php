@@ -54,7 +54,22 @@ class MessagesControllerTestCase extends CakeTestCase {
 		$this->assertNull($this->Messages->redirectUrl, 'No redirects by Auth, user is logged in and has permission.');
 		$this->Messages->send();
 		
-		$this->assertEqual($this->Messages->redirectUrl, array('controller' => 'users', 'action' => 'index'), 'User redirected to member list');
+		$this->assertEqual($this->Messages->redirectUrl, array('plugin' => 'users', 'controller' => 'users', 'action' => 'index'), 'User redirected to member list');
+		
+	}
+	
+	public function testSendActionWithSelfAsRecipient() {
+		$url = '/users/messages/send/1';
+		$this->Messages->params = array_merge(Router::parse($url), array('url' => array('url' => $url)));
+		$this->Messages->Component->initialize($this->Messages);
+		
+		$this->Messages->beforeFilter();
+		$this->Messages->Access->lazyLogin('Phally');
+		$this->Messages->Component->startup($this->Messages);
+		$this->assertNull($this->Messages->redirectUrl, 'No redirects by Auth, user is logged in and has permission.');
+		$this->Messages->send(1);
+		
+		$this->assertEqual($this->Messages->redirectUrl, array('plugin' => 'users', 'controller' => 'users', 'action' => 'index'), 'User redirected to member list');
 		
 	}
 	
