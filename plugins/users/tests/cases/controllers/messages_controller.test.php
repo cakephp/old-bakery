@@ -40,6 +40,7 @@ class MessagesControllerTestCase extends CakeTestCase {
 	public function startTest() {
 		$this->Messages = new TestMessagesController();
 		$this->Messages->constructClasses();
+		$this->Messages->Access->userModel = 'User';
 		$this->Messages->Access->file = 'test_suite_permissions';
 	}
 	

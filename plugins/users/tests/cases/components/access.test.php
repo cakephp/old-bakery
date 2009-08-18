@@ -5,6 +5,7 @@ class FakeTestController extends UsersAppController {
 	public $components = array('Auth', 'Users.Access');
 	
 	public function beforeFilter() {
+		$this->Access->userModel = 'User';
 		$this->Access->file = 'test_suite_permissions';
 	}
 }

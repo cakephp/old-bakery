@@ -40,6 +40,7 @@ class ConversationsControllerTestCase extends CakeTestCase {
 	public function startTest() {
 		$this->Conversations = new TestConversationsController();
 		$this->Conversations->constructClasses();
+		$this->Conversations->Access->userModel = 'User';
 		$this->Conversations->Access->file = 'test_suite_permissions';
 	}
 	

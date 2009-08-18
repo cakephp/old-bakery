@@ -90,6 +90,14 @@ class AccessComponent extends Object {
  */ 
 	public $params = array();
 	
+/** 
+ * Model to use for Auth. Should only be touched in test cases.
+ *
+ * @var string
+ * @access public
+ */ 
+	public $userModel = 'Users.User';
+	
 /**
  * List of permissions from the config file.
  *
@@ -196,7 +204,7 @@ class AccessComponent extends Object {
  */ 
 	public function lazyLogin($username) {
 		if ((Configure::read('debug') > 0) && (!$this->__auth->user())) {
-			return $this->__auth->login(ClassRegistry::init($this->__auth->userModel)->find('first', array(
+			return $this->__auth->login($this->__auth->getModel()->find('first', array(
 				'conditions' => array(
 					$this->__auth->fields['username'] => $username
 				),
@@ -269,6 +277,7 @@ class AccessComponent extends Object {
  */ 
 	private function __configureAuth() {
 		$auth = $this->__auth;
+		$auth->userModel = $this->userModel;
 		$auth->authorize = 'object';
 		$auth->object = $auth->authenticate = $this;
 		
