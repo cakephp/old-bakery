@@ -36,7 +36,7 @@ class AuthHelper extends AppHelper {
  * @var string
  * @access public
  */ 
-	public $user = 'User';
+	public $user = 'Users.User';
 	
 /**
  * The session key of the group ID in the userdata.
@@ -110,8 +110,16 @@ class AuthHelper extends AppHelper {
  */ 
 	public function user($field = null) {
 		$path = $this->auth;
+		
+		if (strpos($this->user, '.')) {
+			list($plugin, $alias) = explode('.', $this->user);
+			$path .= '.' . $plugin;
+		} else {
+			$alias = $this->user;
+		}
+		
 		if ($field) {
-			$path .= '.' . $this->user . '.' . $field;
+			$path .= '.' . $alias . '.' . $field;
 		}
 		return $this->Session->read($path);
 	}

@@ -280,6 +280,7 @@ class AccessComponent extends Object {
 		$auth->userModel = $this->userModel;
 		$auth->authorize = 'object';
 		$auth->object = $auth->authenticate = $this;
+		$auth->loginAction = array('plugin' => 'users', 'controller' => 'users', 'action' => 'login');
 		
 		if (!$auth->user()) {
 			$auth->authError = __('You need to login first.', true);

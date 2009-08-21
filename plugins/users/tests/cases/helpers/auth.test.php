@@ -1,47 +1,40 @@
 <?php
-App::import('Controller', 'Users.AppController');
-App::import('Helper', 'Users.Auth');
-App::import('Helper', 'Session');
-
-class FakeController extends UsersAppController { 
-	public $helpers = array('Auth');
-	public $uses = array();
-}
-
 class AuthHelperTestCase extends CakeTestCase {
 	
-	private $Controller = null;
 	private $Auth = null;
 	
+	public function startCase() {
+		App::import('Helper', 'Users.Auth');
+		App::import('Helper', 'Session');
+		Mock::generate('SessionHelper');
+	}
+	
 	public function startTest($method) {
-		parent::startTest($method);
 		$this->Auth = new AuthHelper();
-		$this->Auth->Session = new SessionHelper();
-		$this->Controller = new FakeController();
-		$this->Controller->constructClasses();
-		$this->Controller->Session->delete('Auth.User');
+		$this->Auth->Session = new MockSessionHelper();
 	}
 	
 	public function testHelperInstances() {
 		$this->assertIsA($this->Auth, 'AuthHelper');
-		$this->assertIsA($this->Auth->Session, 'SessionHelper');
 	}
 	
 	public function testLoggedOnNotSignedInUser() {
+		$this->Auth->Session->setReturnValue('check', false);
+		$this->Auth->Session->setReturnValue('read', null);
 		$this->Auth->beforeRender();
 		$this->assertFalse($this->Auth->logged());
 	}
 	
 	public function testLoggedOnSignedInUser() {
-		$this->Controller->Session->write('Auth.User', array(
-			'username' => 'Phally', 
-			'group_id' => 100)
-		);
+		$this->Auth->Session->setReturnValue('check', true);
+		$this->Auth->Session->setReturnValue('read', 100);
 		$this->Auth->beforeRender();
 		$this->assertTrue($this->Auth->logged());
 	}
 	
 	public function testVisibilityOnNotSignedInUser() {
+		$this->Auth->Session->setReturnValue('check', false);
+		$this->Auth->Session->setReturnValue('read', null);
 		$this->Auth->beforeRender();
 		$this->assertFalse($this->Auth->visible(10));
 		$this->assertFalse($this->Auth->visible(50));
@@ -49,10 +42,8 @@ class AuthHelperTestCase extends CakeTestCase {
 	}
 	
 	public function testVisibilityOnMemberUser() {
-		$this->Controller->Session->write('Auth.User', array(
-			'group_id' => 10
-		));
-		
+		$this->Auth->Session->setReturnValue('check', true);
+		$this->Auth->Session->setReturnValue('read', 10);
 		$this->Auth->beforeRender();
 		$this->assertTrue($this->Auth->visible(10));
 		$this->assertFalse($this->Auth->visible(50));
@@ -60,10 +51,8 @@ class AuthHelperTestCase extends CakeTestCase {
 	}
 	
 	public function testVisibilityOnModeratorUser() {
-		$this->Controller->Session->write('Auth.User', array(
-			'group_id' => 50
-		));
-		
+		$this->Auth->Session->setReturnValue('check', true);
+		$this->Auth->Session->setReturnValue('read', 50);	
 		$this->Auth->beforeRender();
 		$this->assertTrue($this->Auth->visible(10));
 		$this->assertTrue($this->Auth->visible(50));
@@ -71,10 +60,8 @@ class AuthHelperTestCase extends CakeTestCase {
 	}
 	
 	public function testVisibilityOnAdministratorUser() {
-		$this->Controller->Session->write('Auth.User', array(
-			'group_id' => 100
-		));
-		
+		$this->Auth->Session->setReturnValue('check', true);
+		$this->Auth->Session->setReturnValue('read', 100);
 		$this->Auth->beforeRender();
 		$this->assertTrue($this->Auth->visible(10));
 		$this->assertTrue($this->Auth->visible(50));
@@ -92,30 +79,20 @@ class AuthHelperTestCase extends CakeTestCase {
 	}
 	
 	public function testUserOnSignedInUser() {
-		$this->Controller->Session->write('Auth.User', array(
-			'username' => 'Phally', 
-			'group_id' => 100
-		));
+		$this->Auth->Session->setReturnValue('check', true);
+		$this->Auth->Session->setReturnValue('read', 100);
 		
-		$expected = array(
-			'User' => array(
-				'username' => 'Phally', 
-				'group_id' => 100
-			)
-		);
+		$this->Auth->beforeRender();
 		
-		$result = $this->Auth->user();
-		$this->assertEqual($expected, $result);
+		$this->Auth->Session->expect('read', array('Auth.Users'));
+		$this->Auth->user();
 		
-		$expected = 100;
+		$this->Auth->Session->expect('read', array('Auth.Users.User.group_id'));
+		$this->Auth->user('group_id');
 		
-		$result = $this->Auth->user('group_id');
-		$this->assertEqual($expected, $result);
-		
-		$expected = 'Phally';
-		
-		$result = $this->Auth->user('username');
-		$this->assertEqual($expected, $result);
+		$this->Auth->Session->expect('read', array('Auth.Users.User.username'));
+		$this->Auth->user('username');
 	}
+	
 }
 ?>
