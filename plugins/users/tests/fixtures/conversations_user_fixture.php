@@ -29,6 +29,22 @@ class ConversationsUserFixture extends CakeTestFixture {
 			'created'  => '2009-07-19 00:22:13',
 			'modified'  => '2009-07-19 00:22:13'
 		),
+		array(
+			'id'  => 3,
+			'conversation_id' => 2,
+			'user_id' => 1,
+			'new' => true,
+			'created'  => '2009-07-19 00:24:13',
+			'modified'  => '2009-07-19 00:24:13'
+		),
+		array(
+			'id'  => 4,
+			'conversation_id' => 2,
+			'user_id' => 6,
+			'new' => false,
+			'created'  => '2009-07-19 00:24:13',
+			'modified'  => '2009-07-19 00:24:13'
+		),
 	);
 }
 ?>

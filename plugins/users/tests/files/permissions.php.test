@@ -9,6 +9,10 @@ $config['App']['permissions'] = array(
     'Users.Messages' => array(
         'send'           => 10,
     ),
+    'Users.Conversations' => array(
+        'index'          => 10,
+        'show'           => 10,
+    ),
     'Comments' => array(
         'add'            => 10,
         'move'           => 50

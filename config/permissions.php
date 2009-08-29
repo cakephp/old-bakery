@@ -11,6 +11,10 @@ $config['App']['permissions'] = array(
     'Users.Messages' => array(
         'send'           => Group::USERS,
     ),
+    'Users.Conversations' => array(
+        'index'          => Group::USERS,
+        'show'           => Group::USERS,
+    ),
     'DebugKit.ToolbarAccess' => array(
         'history_state'  => Group::GUESTS
     )

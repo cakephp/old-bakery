@@ -40,6 +40,7 @@ class UsersControllerTestCase extends CakeTestCase {
 	public function startTest() {
 		$this->Users = new TestUsersController();
 		$this->Users->constructClasses();
+		$this->Users->Access->userModel = 'User';
 		$this->Users->Access->file = 'test_suite_permissions';
 	}
 	
