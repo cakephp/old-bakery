@@ -237,10 +237,11 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function setRememberCookie($data) {
-		if ($this->__auth->user() && $data[$this->__auth->userModel][$this->rememberField]) {
+		$alias = $this->__auth->getModel()->alias;
+		if ($this->__auth->user() && $data[$alias][$this->rememberField]) {
 			$this->Cookie->write(
 				$this->__auth->sessionKey,
-				array_intersect_key($data[$this->__auth->userModel], array_flip($this->__auth->fields)), 
+				array_intersect_key($data[$alias], array_flip($this->__auth->fields)), 
 				true, 
 				$this->remember
 			);
