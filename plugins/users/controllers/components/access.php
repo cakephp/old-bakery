@@ -187,9 +187,10 @@ class AccessComponent extends Object {
  */ 
 	public function hashPasswords($data) {
 		$auth = $this->__auth;
-		if (is_array($data) && isset($data[$auth->userModel])) {
-			if (isset($data[$auth->userModel][$auth->fields['username']]) && isset($data[$auth->userModel][$auth->fields['password']])) {
-				$data[$auth->userModel][$auth->fields['password']] = Security::hash($data[$auth->userModel][$auth->fields['password']], null, $this->salt);
+		$alias = $auth->getModel()->alias;
+		if (is_array($data) && isset($data[$alias])) {
+			if (isset($data[$alias][$auth->fields['username']]) && isset($data[$alias][$auth->fields['password']])) {
+				$data[$alias][$auth->fields['password']] = Security::hash($data[$alias][$auth->fields['password']], null, $this->salt);
 			}
 		}
 		return $data;
