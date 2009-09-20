@@ -90,6 +90,14 @@ class AccessComponent extends Object {
  */ 
 	public $params = array();
 	
+/** 
+ * Model to use for Auth. Should only be touched in test cases.
+ *
+ * @var string
+ * @access public
+ */ 
+	public $userModel = 'Users.User';
+	
 /**
  * List of permissions from the config file.
  *
@@ -179,9 +187,10 @@ class AccessComponent extends Object {
  */ 
 	public function hashPasswords($data) {
 		$auth = $this->__auth;
-		if (is_array($data) && isset($data[$auth->userModel])) {
-			if (isset($data[$auth->userModel][$auth->fields['username']]) && isset($data[$auth->userModel][$auth->fields['password']])) {
-				$data[$auth->userModel][$auth->fields['password']] = Security::hash($data[$auth->userModel][$auth->fields['password']], null, $this->salt);
+		$alias = $auth->getModel()->alias;
+		if (is_array($data) && isset($data[$alias])) {
+			if (isset($data[$alias][$auth->fields['username']]) && isset($data[$alias][$auth->fields['password']])) {
+				$data[$alias][$auth->fields['password']] = Security::hash($data[$alias][$auth->fields['password']], null, $this->salt);
 			}
 		}
 		return $data;
@@ -196,7 +205,7 @@ class AccessComponent extends Object {
  */ 
 	public function lazyLogin($username) {
 		if ((Configure::read('debug') > 0) && (!$this->__auth->user())) {
-			return $this->__auth->login(ClassRegistry::init($this->__auth->userModel)->find('first', array(
+			return $this->__auth->login($this->__auth->getModel()->find('first', array(
 				'conditions' => array(
 					$this->__auth->fields['username'] => $username
 				),
@@ -228,10 +237,11 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function setRememberCookie($data) {
-		if ($this->__auth->user() && $data[$this->__auth->userModel][$this->rememberField]) {
+		$alias = $this->__auth->getModel()->alias;
+		if ($this->__auth->user() && $data[$alias][$this->rememberField]) {
 			$this->Cookie->write(
 				$this->__auth->sessionKey,
-				array_intersect_key($data[$this->__auth->userModel], array_flip($this->__auth->fields)), 
+				array_intersect_key($data[$alias], array_flip($this->__auth->fields)), 
 				true, 
 				$this->remember
 			);
@@ -269,8 +279,10 @@ class AccessComponent extends Object {
  */ 
 	private function __configureAuth() {
 		$auth = $this->__auth;
+		$auth->userModel = $this->userModel;
 		$auth->authorize = 'object';
 		$auth->object = $auth->authenticate = $this;
+		$auth->loginAction = array('plugin' => 'users', 'controller' => 'users', 'action' => 'login');
 		
 		if (!$auth->user()) {
 			$auth->authError = __('You need to login first.', true);
