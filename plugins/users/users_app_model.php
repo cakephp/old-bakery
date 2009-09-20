@@ -1,1 +1,6 @@
-<?phpclass UsersAppModel extends AppModel {	public $actsAs = array('Containable');	public $recursive = -1;}?>
+<?php
+class UsersAppModel extends AppModel {
+	public $actsAs = array('Containable');
+	public $recursive = -1;
+}
+?>
