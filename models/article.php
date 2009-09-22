@@ -38,7 +38,7 @@ class Article extends AppModel {
 			'className' => 'ArticlePage',
 			'foreignKey' => 'article_id',
 			'dependent' => true,
-			'conditions' => array('pagenum' => 0),
+			'conditions' => array('page_number' => 0),
 			'fields' => array('id','content')
 		)
 	);
@@ -46,7 +46,7 @@ class Article extends AppModel {
 	public $hasMany = array(
 		'ArticlePage' => array(
 			'dependent' => true,
-			'conditions' => array('pagenum !=' => 0)),
+			'conditions' => array('page_number !=' => 0)),
 	//	'Attachment',
 	//	'Comment',
 		'Rating'
@@ -85,6 +85,14 @@ class Article extends AppModel {
 		return $this->save();
 	}
 
+	public function unpublish($id) {
+		$this->set(array(
+			'id' => $id,
+			'published' => 0,
+		));
+		return $this->save();		
+	}
+
 	public function published($id) {
 		return $this->find('count', array('recursive' => -1,'conditions' => array(
 			$this->primaryKey => $id,
@@ -93,13 +101,29 @@ class Article extends AppModel {
 		)));
 	}
 
+	public function undelete($id = null) {
+		if (!empty($id)) {
+            $this->id = $id;
+        }
+        $id = $this->id;
+		if (!$this->exists())
+			return false;
+
+		return $this->save(array(
+				'id' => $id,
+				'deleted' => false,
+				'published' => false,
+				'deleted_date' => null
+			),false);
+	}
+
 	public function delete($id = null, $soft = true) {
 		if (!empty($id)) {
             $this->id = $id;
         }
         $id = $this->id;
 		if (!$this->exists())
-			return null;
+			return false;
 		if ($soft) {
 			return $this->save(array(
 				'id' => $id,
