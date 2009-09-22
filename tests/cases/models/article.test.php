@@ -199,5 +199,83 @@ class ArticleTestCase extends CakeTestCase {
 		$this->assertTrue(empty($result), 'Article wasnt deleted : %s');
 	}
 
+	function testLanguage() {
+		$this->loadFixtures('Article','ArticlePage');
+		$this->Article->Behaviors->attach('Containable');
+
+		$result = $this->Article->find('first', array(
+			'conditions' => array('Article.id' => 1),
+			'contain' => array('Intro','ArticlePage' )
+		));
+
+		//verify good start data
+		$this->assertFalse(empty($result['Article']));
+		if ($this->skipIf(empty($result['Article']),'No Article')) return;
+		$this->assertTrue(empty($result['Article']['parent_id']));
+		$this->assertFalse(empty($result['Intro']));
+		$this->assertFalse(empty($result['Intro']['content']));
+		$this->assertEqual('eng', $result['Article']['lang']);
+		$this->assertEqual(1, sizeof($result['ArticlePage']));
+		if ($this->skipIf(empty($result['ArticlePage']),'No Article pages')) return;
+
+		// create a norwegian version
+		$NorwegianData = array(
+			'Article' => array(
+				'parent_id' => 1,
+				'lang' => 'nob',
+				'title' => 'Norsk Artikkel',
+				'category_id' => 2,
+				'user_id' => 1
+			),
+			'Intro' => array(
+				'content' => 'introduksjon'
+			)
+		);
+		$NorwegianDataPageOne = array(
+			'ArticlePage' => array(
+				'page_number' => 1,
+				'title' => 'side 1',
+				'content' => 'innhold 1'
+			)
+		);
+		// Do not save drafts for this test
+		$this->Article->Intro->saveDraft = false;
+		$this->Article->ArticlePage->saveDraft = false;
+		$this->Article->create($NorwegianData);
+		$this->Article->saveAll();
+		$NorwegianDataPageOne['ArticlePage']['article_id'] = $this->Article->id;
+		$this->Article->ArticlePage->create($NorwegianDataPageOne);
+		$this->Article->ArticlePage->save();
+
+		$result = $this->Article->find('first', array(
+			'conditions' => array('Article.id' => 2),
+			'contain' => array('Intro','ArticlePage')
+		));
+		$this->assertFalse(empty($result['Article']));
+		if ($this->skipIf(empty($result['Article']),'No Norwegian Article')) return;
+		$this->assertEqual(1,$result['Article']['parent_id']);
+		$this->assertFalse(empty($result['Intro']));
+		$this->assertFalse(empty($result['Intro']['content']));
+		$this->assertEqual('nob', $result['Article']['lang']);
+		$this->assertEqual(1, sizeof($result['ArticlePage']));
+		$this->assertFalse(empty($result['ArticlePage']));
+
+		$result = $this->Article->find('all', array(
+			'conditions' => array('lang' => 'nob'),
+			'contain' => array(),
+			'fields' => array('id','title','slug','parent_id','lang')
+		));
+		$this->assertEqual(1, sizeof($result));
+		$this->assertEqual('Norsk Artikkel',$result[0]['Article']['title']);
+		
+		$result = $this->Article->find('all', array(
+			'conditions' => array('lang' => 'eng'),
+			'contain' => array(),
+			'fields' => array('id','title','slug','parent_id','lang')
+		));
+		$this->assertEqual(1, sizeof($result));
+		$this->assertEqual('Lorem ipsum dolor sit amet',$result[0]['Article']['title']);
+	}
+
 }
 ?>
