@@ -37,11 +37,32 @@ class ArticleTestCase extends CakeTestCase {
 	}
 
 	function testCounterCacheQueries() {
-		$this->loadFixtures('Article','Category');
-		$this->Article->Page->save(array('Page' => array(
-			'article_id' => 1, 'page_number' => 1, 'title' => 'test title', 'content' => 'test_content')));
+		$this->loadFixtures('Article','Category','ArticlePage');
+		$result = $this->Article->find('first');
+		$this->assertEqual(1, $result['Article']['article_page_count']);
 
-		debug($this->Article->find('first'));
+		$this->Article->Page->save(array('Page' => array(
+			'article_id' => 1, 'page_number' => 2, 'title' => 'test title', 'content' => 'test_content')));
+		$result = $this->Article->find('first');
+		$this->assertEqual(2, $result['Article']['article_page_count']);
+
+		$this->Article->Page->create();
+		$this->Article->Page->save(array('Page' => array(
+			'article_id' => 1, 'page_number' => 3, 'title' => 'test title', 'content' => 'test_contentd')));
+		$thirdPageId = $this->Article->Page->id;
+		$result = $this->Article->find('first');
+		$this->assertEqual(3, $result['Article']['article_page_count']);
+
+		$this->Article->Page->create();
+		$this->Article->Page->save(array('Page' => array(
+			'article_id' => 1, 'page_number' => 4, 'title' => 'test title', 'content' => 'test_contendt')));
+		$result = $this->Article->find('first');
+		$this->assertEqual(4, $result['Article']['article_page_count']);
+
+		$this->Article->Page->create();
+		$this->Article->Page->save(array('Page' => array('id' => $thirdPageId,'title' => 'edit title')));
+		$result = $this->Article->find('first');
+		$this->assertEqual(4, $result['Article']['article_page_count']);
 	}
 }
 ?>
