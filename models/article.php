@@ -56,6 +56,25 @@ class Article extends AppModel {
 		'fields' => array('id','name')
 	));
 
+	public function languages($id, $include_main = true) {
+		
+		if ($include_main) 
+			return $this->find('list', array(
+				'fields' => array('lang','title'),
+				'order' => 'lang',
+				'conditions' => array('or' => array(
+					array('parent_id' => $id),
+					array('id' => $id)
+				))
+			));
+		else
+			return $this->find('list', array(
+				'fields' => array('lang','title'),
+				'order' => 'lang',
+				'conditions' => array('parent_id' => $id)
+			));
+	}
+
 	public function beforeSave($options = array()) {
 		if (isset($this->data[$this->alias]['title']) && !isset($this->data[$this->alias][$this->primaryKey])) {
 			$this->data[$this->alias]['slug'] = Inflector::slug($this->data[$this->alias]['title']);

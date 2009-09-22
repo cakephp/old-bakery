@@ -275,6 +275,14 @@ class ArticleTestCase extends CakeTestCase {
 		));
 		$this->assertEqual(1, sizeof($result));
 		$this->assertEqual('Lorem ipsum dolor sit amet',$result[0]['Article']['title']);
+
+		$result = $this->Article->languages(1); // ask for all languages for this article
+		$expected = array('eng' => 'Lorem ipsum dolor sit amet','nob' => 'Norsk Artikkel');
+		$this->assertEqual($result,$expected);
+
+		$result = $this->Article->languages(1, false); // ask for other all languages
+		$expected = array('nob' => 'Norsk Artikkel');
+		$this->assertEqual($result,$expected);
 	}
 
 }
