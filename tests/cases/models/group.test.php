@@ -1,6 +1,7 @@
 <?php
 class GroupModelTestCase extends CakeTestCase {
-	public $fixtures = array('app.group', 'plugin.users.user', 'plugin.users.conversation', 'plugin.users.message', 'plugin.users.conversations_user');
+	public $fixtures = array('app.group',
+		'plugin.users.user', 'plugin.users.conversation', 'plugin.users.message', 'plugin.users.conversations_user');
 	
 	private $Group = null;
 	

@@ -2,7 +2,9 @@
 App::import('Model', 'Article');
 
 class ArticleTestCase extends CakeTestCase {
-	public $fixtures = array('app.article_page','app.article_pages_draft','app.article_pages_rev','app.tag','app.article','app.articles_tag','plugin.users.user','app.category','plugin.users.conversation', 'plugin.users.message','app.rating');
+	public $fixtures = array('app.article_page','app.article_pages_draft','app.article_pages_rev','app.tag',
+		'app.article','app.articles_tag','app.category','app.rating',
+		'plugin.users.conversation','plugin.users.message','plugin.users.conversations_user','plugin.users.user');
 	public $autoFixtures = false;
 	private $Article = null;
 
