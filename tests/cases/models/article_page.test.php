@@ -268,9 +268,7 @@ class ArticlePageTestCase extends CakeTestCase {
 				)
 			)
 		));
-		$result = $Page->find('first', array(
-			'recursive' => 1,
-			'contain' => array('Draft','Revision')));
+		$result = $Page->find('first', array('contain' => array('Draft','Revision')));
 
 		$this->assertFalse(empty($result), 'ArticlePage fixture not loaded : %s');
 		if ($this->skipIf(empty($result),'ArticlePage fixture not loaded')) return;
@@ -289,9 +287,7 @@ class ArticlePageTestCase extends CakeTestCase {
 
 		sleep(1);
 
-		$result = $Page->find('first', array(
-			'recursive' => 1,
-			'contain' => array('Draft','Revision')));
+		$result = $Page->find('first', array('contain' => array('Draft','Revision')));
 		
 		$this->assertIdentical($result['Draft']['title'], '2nd edit');
 		$this->assertIdentical(sizeof($result['Revision']),3,'Incorrect number of revisions : %s');
@@ -306,9 +302,7 @@ class ArticlePageTestCase extends CakeTestCase {
 		$Page->createRevision();
 		$Page->showDraft = false;
 
-		$result = $Page->find('first', array(
-			'recursive' => 1,
-			'contain' => array('Draft','Revision')));
+		$result = $Page->find('first', array('contain' => array('Draft','Revision')));
 
 		/**
 		 *  Fixture description :
@@ -341,17 +335,16 @@ class ArticlePageTestCase extends CakeTestCase {
 		$this->assertTrue($this->ArticlePage->acceptDraft(1), 'Accepting draft failed');
 		$this->ArticlePage->Behaviors->enable('Revision');
 
-		$result = $Page->find('first', array(
-			'recursive' => 1,
-			'contain' => array('Draft','Revision')));
+		$result = $Page->find('first', array('contain' => array('Draft','Revision')));
 
 		// page published. no longer any draft. 4 revisions
 		$this->assertIdentical($result['ArticlePage']['title'], 'Lorem ipsum dolor sit amet - draft edit');
 		$this->assertTrue(empty($result['Draft']['draft_id']));
 		$this->assertIdentical(sizeof($result['Revision']),4,'Incorrect number of revisions : %s');
 
-		// user makes a 3rd edit
 
+		// user makes a 3rd edit - this should leave the accepted page and create a draft and a revision
+		$Page->saveDraft = true;
 		$Page->save(array('ArticlePage' => array('id' => 1, 'title' => '3rd edit', 'content' => '3rd edit content')));
 
 		$Page->showDraft = true;
@@ -360,11 +353,8 @@ class ArticlePageTestCase extends CakeTestCase {
 
 		sleep(1);
 
-		$result = $Page->find('first', array(
-			'recursive' => 1,
-			'contain' => array('Draft','Revision')));
+		$result = $Page->find('first', array('contain' => array('Draft','Revision')));
 
-		debug($result);
 		$this->assertIdentical($result['ArticlePage']['title'], 'Lorem ipsum dolor sit amet - draft edit');
 		$this->assertIdentical($result['Draft']['title'], '3rd edit');
 		$this->assertIdentical(sizeof($result['Revision']),5,'Incorrect number of revisions : %s');
@@ -372,8 +362,5 @@ class ArticlePageTestCase extends CakeTestCase {
 		$this->assertIdentical($result['Revision'][0]['title'], '3rd edit');
 	}
 
-	function getTests() {
-		return array('start','startTest','testPageRevisioning','endTest','end');
-	}
 }
 ?>
