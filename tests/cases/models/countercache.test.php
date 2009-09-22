@@ -49,7 +49,6 @@ class ArticleTestCase extends CakeTestCase {
 		$this->Article->Page->create();
 		$this->Article->Page->save(array('Page' => array(
 			'article_id' => 1, 'page_number' => 3, 'title' => 'test title', 'content' => 'test_contentd')));
-		$thirdPageId = $this->Article->Page->id;
 		$result = $this->Article->find('first');
 		$this->assertEqual(3, $result['Article']['article_page_count']);
 
@@ -59,8 +58,7 @@ class ArticleTestCase extends CakeTestCase {
 		$result = $this->Article->find('first');
 		$this->assertEqual(4, $result['Article']['article_page_count']);
 
-		$this->Article->Page->create();
-		$this->Article->Page->save(array('Page' => array('id' => $thirdPageId,'title' => 'edit title')));
+		$this->Article->Page->save(array('Page' => array('id' => 4,'title' => 'edit title')));
 		$result = $this->Article->find('first');
 		$this->assertEqual(4, $result['Article']['article_page_count']);
 	}
