@@ -187,9 +187,10 @@ class AccessComponent extends Object {
  */ 
 	public function hashPasswords($data) {
 		$auth = $this->__auth;
-		if (is_array($data) && isset($data[$auth->userModel])) {
-			if (isset($data[$auth->userModel][$auth->fields['username']]) && isset($data[$auth->userModel][$auth->fields['password']])) {
-				$data[$auth->userModel][$auth->fields['password']] = Security::hash($data[$auth->userModel][$auth->fields['password']], null, $this->salt);
+		$alias = $auth->getModel()->alias;
+		if (is_array($data) && isset($data[$alias])) {
+			if (isset($data[$alias][$auth->fields['username']]) && isset($data[$alias][$auth->fields['password']])) {
+				$data[$alias][$auth->fields['password']] = Security::hash($data[$alias][$auth->fields['password']], null, $this->salt);
 			}
 		}
 		return $data;
@@ -236,10 +237,11 @@ class AccessComponent extends Object {
  * @access public
  */ 
 	public function setRememberCookie($data) {
-		if ($this->__auth->user() && $data[$this->__auth->userModel][$this->rememberField]) {
+		$alias = $this->__auth->getModel()->alias;
+		if ($this->__auth->user() && $data[$alias][$this->rememberField]) {
 			$this->Cookie->write(
 				$this->__auth->sessionKey,
-				array_intersect_key($data[$this->__auth->userModel], array_flip($this->__auth->fields)), 
+				array_intersect_key($data[$alias], array_flip($this->__auth->fields)), 
 				true, 
 				$this->remember
 			);
