@@ -22,6 +22,9 @@ class ArticlePagesController extends AppController {
 			$this->data['ArticlePage']['article_id'] = $this->Session->read('Article');
 			$this->ArticlePage->create($this->data);
 			if ($this->ArticlePage->save()) {
+				$this->ArticlePage->showDraft = true;
+				$this->ArticlePage->createRevision();
+				$this->ArticlePage->showDraft = false;
 				$this->Session->setFlash(__('The ArticlePage has been saved', true));
 				$this->redirect(array('controller'=>'articles','action'=>'index'));
 			} else {
@@ -39,6 +42,9 @@ class ArticlePagesController extends AppController {
 		}
 		if (!empty($this->data)) {
 			if ($this->ArticlePage->save($this->data)) {
+				$this->ArticlePage->showDraft = true;
+				$this->ArticlePage->createRevision();
+				$this->ArticlePage->showDraft = false;
 				$this->Session->setFlash(__('The ArticlePage has been saved', true));
 				$this->redirect(array('action'=>'index'));
 			} else {

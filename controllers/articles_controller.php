@@ -53,6 +53,9 @@ class ArticlesController extends AppController {
 				$this->Article->Intro->set('article_id',$this->Article->id);
 				$this->Article->Intro->set('pagenum',0);
 				$this->Article->Intro->save(null,false);
+				$this->Article->Intro->showDraft = true;
+				$this->Article->Intro->createRevision();
+				$this->Article->Intro->showDraft = false;
 
 				$this->Session->write('Article',$this->Article->id);
 				$this->redirect(array('controller'=>'article_pages','action'=>'add','page'=>1));
