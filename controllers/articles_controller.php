@@ -22,7 +22,25 @@ class ArticlesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		$this->Session->write('Article',$id);
-		$this->set('article', $this->Article->read(null, $id));
+		$article = $this->Article->find('first', array(
+			'contain' => array('Tag','Category','User','Parent'),
+			'conditions' => array('Article.id' => $id)
+		));
+		$this->Article->Intro->showDraft = true;
+		$article = am($article, $this->Article->Intro->find('first', array(
+			'recursive' => -1,
+			'conditions' => array('article_id' => $article['Article']['id'], 'page_number' => 0)
+		)));
+		$this->Article->ArticlePage->showDraft = true;
+		$article['ArticlePage'] = Set::extract($this->Article->ArticlePage->find('all', array(
+			'recursive' => -1,
+			'conditions' => array(
+				'article_id' => $article['Article']['id'],
+				'page_number !=' => 0
+			),
+			'order' => 'page_number'
+		)),'{n}.ArticlePage');
+		$this->set(compact('article'));
 	}
 
 	function add() {

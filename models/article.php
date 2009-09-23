@@ -18,6 +18,8 @@ class Article extends AppModel {
 	);
 */
 
+	public $actsAs = array('Containable');
+
 	public $belongsTo = array(
 		'Parent' => array(
 			'className' => 'Article',

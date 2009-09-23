@@ -69,23 +69,15 @@
 <?php
 	$menu->add('context',array(__('Edit Article', true), array('action'=>'edit', $article['Article']['id'])));
 	$menu->add('context',array(__('Delete Article', true), array('action'=>'delete', $article['Article']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $article['Article']['id'])));
-	$menu->add('context',array(__('List Articles', true), array('action'=>'index')));
-	$menu->add('context',array(__('New Article', true), array('action'=>'add')));
 	$menu->add('context',array(__('List Articles', true), array('controller'=> 'articles', 'action'=>'index')));
-	$menu->add('context',array(__('New Parent', true), array('controller'=> 'articles', 'action'=>'add')));
 	$menu->add('context',array(__('List Categories', true), array('controller'=> 'categories', 'action'=>'index')));
-	$menu->add('context',array(__('New Category', true), array('controller'=> 'categories', 'action'=>'add')));
-	$menu->add('context',array(__('List Users', true), array('controller'=> 'users', 'action'=>'index')));
-	$menu->add('context',array(__('New User', true), array('controller'=> 'users', 'action'=>'add')));
-	$menu->add('context',array(__('List Article Pages', true), array('controller'=> 'article_pages', 'action'=>'index')));
-	$menu->add('context',array(__('New Article Page', true), array('controller'=> 'article_pages', 'action'=>'add')));
 ?>
 <div class="related">
-	<h3><?php __('Related Article Pages');?></h3>
+	<h3><?php __('Article Pages');?></h3>
 	<?php if (!empty($article['ArticlePage'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php __('Pagenum'); ?></th>
+		<th><?php __('Page Number'); ?></th>
 		<th><?php __('Title'); ?></th>
 		<th><?php __('Content'); ?></th>
 		<th class="actions"><?php __('Actions');?></th>
@@ -99,7 +91,7 @@
 			}
 		?>
 		<tr<?php echo $class;?>>
-			<td><?php echo $articlePage['pagenum'];?></td>
+			<td><?php echo $articlePage['page_number'];?></td>
 			<td><?php echo $articlePage['title'];?></td>
 			<td><?php echo $articlePage['content'];?></td>
 			<td class="actions">
@@ -114,7 +106,7 @@
 
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(__('New Article Page', true), array('controller'=> 'article_pages', 'action'=>'add'));?> </li>
+			<li><?php echo $html->link(__('New Article Page', true), array('controller'=> 'article_pages', 'action'=>'add', $article['Article']['id']));?> </li>
 		</ul>
 	</div>
 </div>

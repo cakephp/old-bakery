@@ -5,7 +5,7 @@
 			'id',
 			'article_id',
 			'title',
-			'pagenum',
+			'page_number',
 			'content',
 	));
     echo $form->end('Submit');?>

@@ -2,22 +2,11 @@
 <?php
     echo $form->create('Article');
     echo $form->inputs(array('fieldset' => false,
-			'parent_id' => array('empty' => __('Opiontally select parent article',true)),
-		//	'lang',
-		//	'slug',
-			'category_id',
-		//	'user_id',
-		//	'rate_count',
-		//	'rate_sum',
-		//	'viewed',
-			'title',
-		//	'comment_count',
-		//	'article_page_count',
-		//	'published',
-		//	'published_date',
-		//	'deleted',
-		//	'deleted_date',
+		'title',
 		'tags',
+		'category_id',
+		'parent_id' => array('empty' => __('Opiontally select parent article',true)),
+		'lang',
 		'Intro.content'
 	));
     echo $form->end('Submit');?>

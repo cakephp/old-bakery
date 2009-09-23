@@ -16,9 +16,9 @@
 			<?php echo $articlePage['ArticlePage']['title']; ?>
 			&nbsp;
 		</dd>
-		<dt><?php __('Pagenum'); ?></dt>
+		<dt><?php __('page_number'); ?></dt>
 		<dd>
-			<?php echo $articlePage['ArticlePage']['pagenum']; ?>
+			<?php echo $articlePage['ArticlePage']['page_number']; ?>
 			&nbsp;
 		</dd>
 		<dt><?php __('Content'); ?></dt>
