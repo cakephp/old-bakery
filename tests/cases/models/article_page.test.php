@@ -36,6 +36,9 @@ class ArticlePageTestCase extends CakeTestCase {
 			'content' => 'first line of code'
 		)));
 		$this->ArticlePage->save();
+		$this->ArticlePage->showDraft = true;
+		$this->ArticlePage->createRevision();
+		$this->ArticlePage->showDraft = false;
 		$result = $this->ArticlePage->read();
 		$expected = array(
 			'id' => 1,
@@ -69,6 +72,9 @@ class ArticlePageTestCase extends CakeTestCase {
 		$this->assertEqual($result,'Page 1 : Lorem ipsum dolor sit amet');
 
 		$this->ArticlePage->save(array('ArticlePage'=>array('id'=>1, 'title' => 'edited title')));
+		$this->ArticlePage->showDraft = true;
+		$this->ArticlePage->createRevision();
+		$this->ArticlePage->showDraft = false;
 
 		$this->assertEqual($this->ArticlePage->hasDraft(1), 1);
 		$result = $this->ArticlePage->field('title');
@@ -84,6 +90,9 @@ class ArticlePageTestCase extends CakeTestCase {
 		$this->loadFixtures('ArticlePage');
 		$this->ArticlePage->saveDraft = false;
 		$this->ArticlePage->save(array('id' => 1, 'title' => 'edit','content' => 'edited'));
+		$this->ArticlePage->showDraft = true;
+		$this->ArticlePage->createRevision();
+		$this->ArticlePage->showDraft = false;
 
 		$this->assertIdentical($this->ArticlePage->hasDraft(1),0);
 		$this->assertEqual($this->ArticlePage->read(array('id','title','content')), array('ArticlePage' => array(
@@ -111,10 +120,14 @@ class ArticlePageTestCase extends CakeTestCase {
 		$data = array('Intro' => array(
 			'article_id' => $this->ArticlePage->Article->id,
 			'page_number' => 0,
-			'content' => 'Introdcution text'
+			'content' => 'Introduction text'
 		));
 		$this->ArticlePage->Article->Intro->create($data);
 		$this->ArticlePage->Article->Intro->save();
+		$this->ArticlePage->Article->Intro->showDraft = true;
+		$this->ArticlePage->Article->Intro->createRevision();
+		$this->ArticlePage->Article->Intro->showDraft = false;
+
 
 		$data = array('ArticlePage' => array(
 			'article_id' => $this->ArticlePage->Article->id,
@@ -124,6 +137,9 @@ class ArticlePageTestCase extends CakeTestCase {
 		));
 		$this->ArticlePage->create($data);
 		$this->ArticlePage->save();
+		$this->ArticlePage->showDraft = true;
+		$this->ArticlePage->createRevision();
+		$this->ArticlePage->showDraft = false;
 
 		$data = array('ArticlePage' => array(
 			'article_id' => $this->ArticlePage->Article->id,
@@ -133,6 +149,9 @@ class ArticlePageTestCase extends CakeTestCase {
 		));
 		$this->ArticlePage->create($data);
 		$this->ArticlePage->save();
+		$this->ArticlePage->showDraft = true;
+		$this->ArticlePage->createRevision();
+		$this->ArticlePage->showDraft = false;
 
 		$data = array('ArticlePage' => array(
 			'article_id' => $this->ArticlePage->Article->id,
@@ -142,6 +161,9 @@ class ArticlePageTestCase extends CakeTestCase {
 		));
 		$this->ArticlePage->create($data);
 		$this->ArticlePage->save();
+		$this->ArticlePage->showDraft = true;
+		$this->ArticlePage->createRevision();
+		$this->ArticlePage->showDraft = false;
 
 		$this->ArticlePage->create();
 		$this->ArticlePage->Article->create();
@@ -179,11 +201,10 @@ class ArticlePageTestCase extends CakeTestCase {
 		$this->assertIdentical(1, sizeof($articlePageSituation[1]['Revision']), 'Incorret number of Revisions : %s');
 		$this->assertIdentical(1, sizeof($articlePageSituation[2]['Revision']), 'Incorret number of Revisions : %s');
 		$this->assertIdentical(1, sizeof($articlePageSituation[3]['Revision']), 'Incorret number of Revisions : %s');
-		$this->assertIdentical('Background', $articlePageSituation[0]['Revision'][0]['title'], 'Title not set in revision : %s');
-		$this->assertIdentical('Code Examples', $articlePageSituation[0]['Revision'][0]['title'], 'Title not set in revision : %s');
-		$this->assertIdentical('Code', $articlePageSituation[0]['Revision'][0]['title'], 'Title not set in revision : %s');
-
-		//debug($articlePageSituation);
+		$this->assertIdentical('Introduction text', $articlePageSituation[0]['Revision'][0]['content'], 'Content not set in revision : %s');
+		$this->assertIdentical('Background', $articlePageSituation[1]['Revision'][0]['title'], 'Title not set in revision : %s');
+		$this->assertIdentical('Code Examples', $articlePageSituation[2]['Revision'][0]['title'], 'Title not set in revision : %s');
+		$this->assertIdentical('Code', $articlePageSituation[3]['Revision'][0]['title'], 'Title not set in revision : %s');
 
 		// Author edits a page
 		$this->ArticlePage->data = null;
@@ -282,7 +303,6 @@ class ArticlePageTestCase extends CakeTestCase {
 		$this->assertIdentical($this->ArticlePage->DraftModel->find('count'), 0, 'Should be no drafts : %s');
 		$this->assertIdentical($this->ArticlePage->ShadowModel->find('count', array('conditions'=> array(
 			'id' => 2))), 3, 'Incorret number of Revisions : %s');
-
 	}
 
 	function testPageRevisioning() {

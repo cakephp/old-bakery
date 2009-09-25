@@ -3,7 +3,7 @@ class ArticlePage extends AppModel {
 
 	public $name = 'ArticlePage';
 	public $actsAs = array(
-		'Revision',
+		'Revision' => array('auto' => false),
 		'Drafted' => array('fields' => array('title','content'))
 	);
 
