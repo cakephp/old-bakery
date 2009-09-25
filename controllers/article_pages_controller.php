@@ -14,7 +14,9 @@ class ArticlePagesController extends AppController {
 			$this->Session->setFlash(__('Invalid ArticlePage.', true));
 			$this->redirect(array('action'=>'index'));
 		}
+		$this->ArticlePage->showDraft = true;
 		$this->set('articlePage', $this->ArticlePage->read(null, $id));
+		$this->set('revisions', $this->ArticlePage->revisions());
 	}
 
 	function add() {

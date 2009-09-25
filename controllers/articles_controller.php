@@ -6,9 +6,12 @@ class ArticlesController extends AppController {
 
 	function index() {
 		$this->paginate['conditions'] = array(
-	//		'Article.published' => true,
-			'Article.deleted' => false
+		//	'Article.published' => true,
+		//	'Article.deleted' => false
 		);
+		if (isset($this->params['named']['published']))
+			$this->paginate['conditions']['Article.published'] = $this->params['named']['published'];
+
 		if (isset($this->passedArgs['category_id']))
 			$this->paginate['conditions']['Article.category_id'] = $this->passedArgs['category_id'];
 		$this->Article->recursive = 0;
@@ -52,10 +55,9 @@ class ArticlesController extends AppController {
 				$this->Article->save(null,false);
 				$this->Article->Intro->set('article_id',$this->Article->id);
 				$this->Article->Intro->set('pagenum',0);
+				$this->Article->Intro->saveDraft = false;
 				$this->Article->Intro->save(null,false);
-				$this->Article->Intro->showDraft = true;
 				$this->Article->Intro->createRevision();
-				$this->Article->Intro->showDraft = false;
 
 				$this->Session->write('Article',$this->Article->id);
 				$this->redirect(array('controller'=>'article_pages','action'=>'add','page'=>1));
@@ -99,6 +101,28 @@ class ArticlesController extends AppController {
 		}
 		if ($this->Article->del($id)) {
 			$this->Session->setFlash(__('Article deleted', true));
+			$this->redirect(array('action'=>'index'));
+		}
+	}
+
+	function publish($id = null) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid id for Article', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		if ($this->Article->publish($id)) {
+			$this->Session->setFlash(__('Article published', true));
+			$this->redirect(array('action'=>'index'));
+		}
+	}
+
+	function unpublish($id = null) {
+		if (!$id) {
+			$this->Session->setFlash(__('Invalid id for Article', true));
+			$this->redirect(array('action'=>'index'));
+		}
+		if ($this->Article->unpublish($id)) {
+			$this->Session->setFlash(__('Article unpublished', true));
 			$this->redirect(array('action'=>'index'));
 		}
 	}

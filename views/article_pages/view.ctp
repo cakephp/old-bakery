@@ -32,5 +32,5 @@
 	$menu->add('context',array(__('Edit ArticlePage', true), array('action'=>'edit', $articlePage['ArticlePage']['id'])));
 	$menu->add('context',array(__('Delete ArticlePage', true), array('action'=>'delete', $articlePage['ArticlePage']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $articlePage['ArticlePage']['id'])));
 	$menu->add('context',array(__('List ArticlePages', true), array('action'=>'index')));
-	$menu->add('context',array(__('New ArticlePage', true), array('action'=>'add')));
+	$menu->add('context',array(__('List Articles', true), array('controller' => 'articles', 'action'=>'index')));
 ?>

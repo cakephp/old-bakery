@@ -68,6 +68,12 @@
 </div>
 <?php
 	$menu->add('context',array(__('Edit Article', true), array('action'=>'edit', $article['Article']['id'])));
+
+	if ($article['Article']['published'])
+		$menu->add('context',array(__('Unpublish Article', true), array('action'=>'unpublish', $article['Article']['id'])));
+	else
+		$menu->add('context',array(__('Publish Article', true), array('action'=>'publish', $article['Article']['id'])));
+
 	$menu->add('context',array(__('Delete Article', true), array('action'=>'delete', $article['Article']['id']), null, sprintf(__('Are you sure you want to delete # %s?', true), $article['Article']['id'])));
 	$menu->add('context',array(__('List Articles', true), array('controller'=> 'articles', 'action'=>'index')));
 	$menu->add('context',array(__('List Categories', true), array('controller'=> 'categories', 'action'=>'index')));

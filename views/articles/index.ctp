@@ -2,9 +2,18 @@
 <h2><?php __('Articles');?></h2>
 <p>
 <?php
+$paginator->options(array('url'=>$this->passedArgs));
 echo $paginator->counter(array(
 'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
 ));
+?></p>
+<p><h4>Show:</h4>
+<?php
+
+$menu->add('filter', array('Published', am($this->params['named'], array('published' => 1))));
+$menu->add('filter', array('Unpublished', am($this->params['named'], array('published' => 0))));
+echo $menu->generate('filter');
+echo $html->tag('br');
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
