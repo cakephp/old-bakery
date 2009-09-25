@@ -149,16 +149,41 @@ class ArticlePageTestCase extends CakeTestCase {
 		/**
 		 * At this point, we should have one unpublished Article with 
 		 * 3 ArticlePages, plus the Intro, which is also an ArticlePage.
-		 * As an author writes an unpublished article, there isn no need for
-		 * draft, only changes needs to be drafted. So there should be no drafts
-		 * of any of the ArticlePages, but each page should have one revision.
-		 * 
+		 * As an author writes an unpublished article, the Intro is not drafted
+		 * There are just drafts of the ArticlePages, and each page (and intro)
+		 * should have one revision.
 		 */
-
 		$this->assertIdentical($this->ArticlePage->Article->find('count'), 1, 'More than one Article : %s');
-		$this->assertIdentical($this->ArticlePage->find('count'), 4, 'In correct number of Pages : %s');
-		$this->assertIdentical($this->ArticlePage->DraftModel->find('count'), 3, 'Drafts created : %s');
-		$this->assertIdentical($this->ArticlePage->ShadowModel->find('count'), 4, 'Incorret number of Revisions : %s');
+		$this->ArticlePage->bindModel(array(
+			'hasOne' => array(
+				'Draft' => array(
+					'className' => 'ArticlePagesDraft',
+					'foreignKey' => 'id' 
+			)),
+			'hasMany' => array(
+				'Revision' => array(
+					'className' => 'ArticlePagesRev',
+					'foreignKey' => 'id',
+					'order' => 'version_created DESC, version_id DESC'						
+				)	
+			)
+		));
+		$articlePageSituation  = $this->ArticlePage->find('all',array('contain' => array('Draft','Revision')));
+		$this->assertIdentical(4, sizeof($articlePageSituation), 'In correct number of Pages : %s');
+		if ($this->skipIf(4 != sizeof($articlePageSituation),'In correct number of Pages')) return;
+		$this->assertTrue(empty($articlePageSituation[0]['Draft']['title']), 'Draft created for Intro : %s');
+		$this->assertIdentical('Background',$articlePageSituation[1]['Draft']['title'], 'Draft not created a Page : %s');
+		$this->assertIdentical('Code Examples',$articlePageSituation[2]['Draft']['title'], 'Draft not created a Page : %s');
+		$this->assertIdentical('Code',$articlePageSituation[3]['Draft']['title'], 'Draft not created a Page : %s');
+		$this->assertIdentical(1, sizeof($articlePageSituation[0]['Revision']), 'Incorret number of Revisions : %s');
+		$this->assertIdentical(1, sizeof($articlePageSituation[1]['Revision']), 'Incorret number of Revisions : %s');
+		$this->assertIdentical(1, sizeof($articlePageSituation[2]['Revision']), 'Incorret number of Revisions : %s');
+		$this->assertIdentical(1, sizeof($articlePageSituation[3]['Revision']), 'Incorret number of Revisions : %s');
+		$this->assertIdentical('Background', $articlePageSituation[0]['Revision'][0]['title'], 'Title not set in revision : %s');
+		$this->assertIdentical('Code Examples', $articlePageSituation[0]['Revision'][0]['title'], 'Title not set in revision : %s');
+		$this->assertIdentical('Code', $articlePageSituation[0]['Revision'][0]['title'], 'Title not set in revision : %s');
+
+		//debug($articlePageSituation);
 
 		// Author edits a page
 		$this->ArticlePage->data = null;
