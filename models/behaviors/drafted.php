@@ -56,87 +56,6 @@ class DraftedBehavior extends ModelBehavior {
 	}
 	
 	/**
-	 * Move a draft into live table. Will delete the draf after saving.
-	 *
-	 * @param object $Model
-	 * @param int $id
-	 * @return boolean on success
-	 */
-	public function acceptDraft(&$Model, $id) {
-		if (!$Model->hasDraft($id)) {
-			return false;
-		}
-		$draft = $Model->DraftModel->find('first', array(
-				'conditions' => array($Model->primaryKey => $id)));
-		if (isset($Model->saveDraft)) {
-			$draftState = $Model->saveDraft;
-		}
-		$Model->saveDraft = false;
-		if ($Model->save($draft)) {
-			return $Model->DraftModel->delete($draft[$Model->DraftModel->alias][$Model->DraftModel->primaryKey]);
-		}
-		if (isset($draftState)) {
-			$Model->saveDraft = $draftState;
-		} else {
-			unset($Model->saveDraft);
-		}
-		return false;
-	}
-	
-	/**
-	 * Find all drafts 
-	 *
-	 * @param object $Model 
-	 * @param int $page 
-	 * @param int $limit 
-	 * @return mixed either array with drafts, or true/false if id given
-	 */
-	public function findDrafts(&$Model, $page = 1, $limit = null) {
-		$draftAlias = $this->model_prefix . $Model->alias;
-		$db = ConnectionManager::getDataSource($Model->DraftModel->useDbConfig);
-		$tablePrefix = $db->config['prefix'];
-		$fields = array(
-				$Model->alias . '.' . $Model->primaryKey, 
-				$Model->alias . '.' . $Model->displayField, 
-				$draftAlias . '.' . $Model->primaryKey, 
-				$draftAlias . '.' . $this->model_primary_key);
-		if (in_array($Model->displayField, $this->settings[$Model->alias]['fields'])) {
-			$fields[] = $draftAlias . '.' . $Model->displayField;
-		}
-		$Model->DraftModel->alias = $draftAlias;
-		$all = $Model->DraftModel->find('all', array(
-				'fields' => $fields, 
-				'page' => $page, 
-				'limit' => $limit, 
-				'joins' => array(
-						array(
-								'table' => '`' . $Model->tablePrefix . $Model->table . '`', 
-								'alias' => $Model->alias, 
-								'type' => 'LEFT', 
-								'foreignKey' => false, 
-								'conditions' => array(
-										$Model->alias . '.' . $Model->primaryKey . ' = ' . $draftAlias . '.' . $Model->primaryKey)))));
-		$Model->DraftModel->alias = $Model->alias;
-		foreach ($all as $key => $value) {
-			$all[$key][$Model->alias] = array_merge($value[$Model->alias], $value[$draftAlias]);
-			unset($all[$key][$draftAlias]);
-		}
-		return $all;
-	}
-	
-	/**
-	 * Checks if model with given id is present in draft table
-	 *
-	 * @param object $Model
-	 * @param int $id
-	 * @return int 0 or 1 - consider boolean
-	 */
-	public function hasDraft(&$Model, $id) {
-		return $Model->DraftModel->find('count', array(
-				'conditions' => array($Model->primaryKey => $id)));
-	}
-	
-	/**
 	 * When a model row is deleted, this will delete locales for that Id
 	 *
 	 * @param object $Model
@@ -214,7 +133,7 @@ class DraftedBehavior extends ModelBehavior {
 	 * @param array $query
 	 * @return array $query
 	 */
-	function beforeFind(&$Model, $query) {
+	public function beforeFind(&$Model, $query) {
 		$this->findQueryType = $Model->findQueryType;
 		if (isset($Model->showDraft) && $Model->showDraft === true) {
 			$draftAlias = $this->model_prefix . $Model->alias;
@@ -276,6 +195,87 @@ class DraftedBehavior extends ModelBehavior {
 			return $Model->DraftModel->save();
 		}
 		return true;
+	}
+
+	/**
+	 * Move a draft into live table. Will delete the draf after saving.
+	 *
+	 * @param object $Model
+	 * @param int $id
+	 * @return boolean on success
+	 */
+	public function acceptDraft(&$Model, $id) {
+		if (!$Model->hasDraft($id)) {
+			return false;
+		}
+		$draft = $Model->DraftModel->find('first', array(
+				'conditions' => array($Model->primaryKey => $id)));
+		if (isset($Model->saveDraft)) {
+			$draftState = $Model->saveDraft;
+		}
+		$Model->saveDraft = false;
+		if ($Model->save($draft, false, array_keys($draft[$Model->alias]))) {
+			return $Model->DraftModel->delete($draft[$Model->DraftModel->alias][$Model->DraftModel->primaryKey]);
+		}
+		if (isset($draftState)) {
+			$Model->saveDraft = $draftState;
+		} else {
+			unset($Model->saveDraft);
+		}
+		return false;
+	}
+
+	/**
+	 * Find all drafts
+	 *
+	 * @param object $Model
+	 * @param int $page
+	 * @param int $limit
+	 * @return mixed either array with drafts, or true/false if id given
+	 */
+	public function findDrafts(&$Model, $page = 1, $limit = null) {
+		$draftAlias = $this->model_prefix . $Model->alias;
+		$db = ConnectionManager::getDataSource($Model->DraftModel->useDbConfig);
+		$tablePrefix = $db->config['prefix'];
+		$fields = array(
+				$Model->alias . '.' . $Model->primaryKey,
+				$Model->alias . '.' . $Model->displayField,
+				$draftAlias . '.' . $Model->primaryKey,
+				$draftAlias . '.' . $this->model_primary_key);
+		if (in_array($Model->displayField, $this->settings[$Model->alias]['fields'])) {
+			$fields[] = $draftAlias . '.' . $Model->displayField;
+		}
+		$Model->DraftModel->alias = $draftAlias;
+		$all = $Model->DraftModel->find('all', array(
+				'fields' => $fields,
+				'page' => $page,
+				'limit' => $limit,
+				'joins' => array(
+						array(
+								'table' => '`' . $Model->tablePrefix . $Model->table . '`',
+								'alias' => $Model->alias,
+								'type' => 'LEFT',
+								'foreignKey' => false,
+								'conditions' => array(
+										$Model->alias . '.' . $Model->primaryKey . ' = ' . $draftAlias . '.' . $Model->primaryKey)))));
+		$Model->DraftModel->alias = $Model->alias;
+		foreach ($all as $key => $value) {
+			$all[$key][$Model->alias] = array_merge($value[$Model->alias], $value[$draftAlias]);
+			unset($all[$key][$draftAlias]);
+		}
+		return $all;
+	}
+
+	/**
+	 * Checks if model with given id is present in draft table
+	 *
+	 * @param object $Model
+	 * @param int $id
+	 * @return int 0 or 1 - consider boolean
+	 */
+	public function hasDraft(&$Model, $id) {
+		return $Model->DraftModel->find('count', array(
+				'conditions' => array($Model->primaryKey => $id)));
 	}
 	
 	/**
