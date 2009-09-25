@@ -6,8 +6,8 @@
  * @url http://code.google.com/p/alkemann
  * @author Alexander Morland aka alkemann
  * @author Ronny Vindenes 
- * @modified 26. january 2009
- * @version 0.1
+ * @modified 25. september 2009
+ * @version 1.1
  */
 class DraftedBehavior extends ModelBehavior {
 	/**
@@ -30,6 +30,7 @@ class DraftedBehavior extends ModelBehavior {
 	
 	/**
 	 * Configure the behavior through the Model::actsAs property
+	 * If fields are not spesified, string and text fields will be assumed
 	 *
 	 * @param object $Model
 	 * @param array $config
@@ -54,9 +55,54 @@ class DraftedBehavior extends ModelBehavior {
 		$Model->DraftModel = false;
 		$this->createDraftModel($Model);
 	}
-	
+
 	/**
-	 * When a model row is deleted, this will delete locales for that Id
+	 * Ask for all drafts, check if a row is drafted or copy draft to live for a row.
+	 * Public access to draft actions, valid types are 'check','accept','all'.
+	 *
+	 * @example $this->Article->draft('check', 12);
+	 * @example $this->Article->draft('accept', 12);
+	 * @example $this->Article->draft('accept', array('id' => 23));
+	 * @example $this->Article->draft('all');
+	 * @example $this->Article->draft('all', array('page' => 2, 'limit' => 10));
+	 * @param object $Model
+	 * @param string $type
+	 * @param mixed $options
+	 * @return mixed
+	 */
+	public function draft(&$Model, $type, $options = array()) {
+		switch ($type){
+			case 'check':
+				if (is_array($options)) {
+					$id = $options[$Model->primaryKey];
+				} else {
+					$id = $options;
+				}
+				return $this->hasDraft($Model, $id);
+			break;
+			case 'accept':
+				if (is_array($options)) {
+					$id = $options[$Model->primaryKey];
+				} else {
+					$id = $options;
+				}
+				$result = $this->acceptDraft($Model, $id);
+				if ($result && method_exists($Model, 'afterDraft')) {
+					$Model->afterDraft('accept', $id);
+				}
+				return $result;
+			break;
+			case 'all':
+				return $this->findDrafts($Model, $options);
+			break;
+			default:
+				return null;
+			break;
+		}
+	}
+
+	/**
+	 * When a model row is deleted, this will delete drafts for that Id
 	 *
 	 * @param object $Model
 	 */
@@ -65,16 +111,16 @@ class DraftedBehavior extends ModelBehavior {
 			$Model->DraftModel->deleteAll(array($Model->primaryKey => $Model->id));
 		}
 	}
-	
+
 	/**
-	 * If locale is set, assumes the result have joined locale data and will merge the results 
+	 * If $Model->showDraft is set to true drafted fields will replace the live data on find.
 	 *
 	 * @param object $Model
 	 * @param array $result
 	 * @return array modified result
 	 */
 	public function afterFind(&$Model, $result, $primary = false) {
-		if (empty($result) || $this->findQueryType == 'count') { // !$Model->DraftModel ||
+		if (empty($result) || $this->findQueryType == 'count') {
 			return $result;
 		}
 		if (isset($Model->showDraft) && $Model->showDraft === true) {
@@ -82,11 +128,8 @@ class DraftedBehavior extends ModelBehavior {
 			foreach ($result as $key => $data) {
 				if (isset($data[$draftAlias])) {
 					if (!empty($data[$draftAlias][$this->model_primary_key])) {
-				/*		foreach ($data[$draftAlias] as $field => $value) {
-							$result[$key][$Model->alias][$field] = $value;
-						}
-				*/
-						$result[$key][$Model->alias] = am($result[$key][$Model->alias],$data[$draftAlias]);
+						// foreach ($data[$draftAlias] as $field => $value) { $result[$key][$Model->alias][$field] = $value; }
+						$result[$key][$Model->alias] = array_merge($result[$key][$Model->alias], $data[$draftAlias]);
 					} else {
 						$result[$key][$Model->alias][$this->model_primary_key] = NULL;
 					}
@@ -127,7 +170,7 @@ class DraftedBehavior extends ModelBehavior {
 	}
 	
 	/**
-	 * If locale is set and find type is first all or list, will join in the locales table
+	 * If $Model->showDraft is set to true and find type is first all or list, join the draft table
 	 *
 	 * @param object $Model
 	 * @param array $query
@@ -135,6 +178,9 @@ class DraftedBehavior extends ModelBehavior {
 	 */
 	public function beforeFind(&$Model, $query) {
 		$this->findQueryType = $Model->findQueryType;
+		if (!in_array($this->findQueryType,array('all','first','list'))) {
+			return $query;
+		}
 		if (isset($Model->showDraft) && $Model->showDraft === true) {
 			$draftAlias = $this->model_prefix . $Model->alias;
 			$db = ConnectionManager::getDataSource($Model->DraftModel->useDbConfig);
@@ -198,14 +244,14 @@ class DraftedBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * Move a draft into live table. Will delete the draf after saving.
+	 * Copy a draft into live table.
 	 *
 	 * @param object $Model
 	 * @param int $id
 	 * @return boolean on success
 	 */
 	public function acceptDraft(&$Model, $id) {
-		if (!$Model->hasDraft($id)) {
+		if (!$this->hasDraft($Model, $id)) {
 			return false;
 		}
 		$draft = $Model->DraftModel->find('first', array(
@@ -233,7 +279,7 @@ class DraftedBehavior extends ModelBehavior {
 	 * @param int $limit
 	 * @return mixed either array with drafts, or true/false if id given
 	 */
-	public function findDrafts(&$Model, $page = 1, $limit = null) {
+	private function findDrafts(&$Model, $options = array()) {
 		$draftAlias = $this->model_prefix . $Model->alias;
 		$db = ConnectionManager::getDataSource($Model->DraftModel->useDbConfig);
 		$tablePrefix = $db->config['prefix'];
@@ -246,10 +292,11 @@ class DraftedBehavior extends ModelBehavior {
 			$fields[] = $draftAlias . '.' . $Model->displayField;
 		}
 		$Model->DraftModel->alias = $draftAlias;
+		$options = am(array('limit' => null, 'page' => 1), $options);
 		$all = $Model->DraftModel->find('all', array(
 				'fields' => $fields,
-				'page' => $page,
-				'limit' => $limit,
+				'page' => $options['page'],
+				'limit' => $options['limit'],
 				'joins' => array(
 						array(
 								'table' => '`' . $Model->tablePrefix . $Model->table . '`',
