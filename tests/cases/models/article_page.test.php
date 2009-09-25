@@ -94,7 +94,7 @@ class ArticlePageTestCase extends CakeTestCase {
 	}
 
 	function testArticleFlow() {
-		$this->loadFixtures('User');
+		$this->loadFixtures('User','Category');
 		$data = array('Article' => array(
 			'title' => 'Test Article',
 			'category_id' => 2,
@@ -106,7 +106,6 @@ class ArticlePageTestCase extends CakeTestCase {
 		/** Should this setting be automatic?
 		 *  ie check if Article publish status = 0 + publised_data = null
 		 */
-		$this->ArticlePage->saveDraft = false;
 		$this->ArticlePage->Article->Intro->saveDraft = false;
 
 		$data = array('Intro' => array(
@@ -158,15 +157,19 @@ class ArticlePageTestCase extends CakeTestCase {
 
 		$this->assertIdentical($this->ArticlePage->Article->find('count'), 1, 'More than one Article : %s');
 		$this->assertIdentical($this->ArticlePage->find('count'), 4, 'In correct number of Pages : %s');
-		$this->assertIdentical($this->ArticlePage->DraftModel->find('count'), 0, 'Drafts created : %s');
+		$this->assertIdentical($this->ArticlePage->DraftModel->find('count'), 3, 'Drafts created : %s');
 		$this->assertIdentical($this->ArticlePage->ShadowModel->find('count'), 4, 'Incorret number of Revisions : %s');
 
-		// Author edits a page 
+		// Author edits a page
+		$this->ArticlePage->data = null;
 		$this->ArticlePage->save(array('ArticlePage' => array(
 			'id' => 2,
 			'title' => 'edited title',
 			'content' => 'edited content'
 		)));
+		$this->ArticlePage->showDraft = true;
+		$this->ArticlePage->createRevision();
+		$this->ArticlePage->showDraft = false;
 
 		/**
 		 * At this point the article is still unpublished, so edit should go
@@ -180,9 +183,22 @@ class ArticlePageTestCase extends CakeTestCase {
 		//Moderator publishes the article
 		$this->assertTrue($this->ArticlePage->Article->publish(1), 'Article publishing failed : %s');
 
+		$this->ArticlePage->Article->ArticlePage->bindModel(array(
+			'hasOne' => array(
+				'Draft' => array(
+					'className' => 'ArticlePagesDraft',
+					'foreignKey' => 'id'
+				)
+			)
+
+		));
+
+
 		$this->ArticlePage->Article->id = 1;
 		$this->assertIdentical($this->ArticlePage->Article->field('published'),'1', 'Article is not published : %s');
-		
+		// check that article, intro and article pages are all published
+		$this->assertIdentical($this->ArticlePage->DraftModel->find('count'), 0, 'Drafts still exist : %s');
+
 		/** Should this setting be automatic?
 		 *  ie check if Article publish status = 0 + publised_data = null
 		 */

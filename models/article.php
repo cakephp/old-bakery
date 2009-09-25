@@ -103,6 +103,7 @@ class Article extends AppModel {
 			'published' => 1,
 			'published_date' => date('Y-m-d H:i:s')
 		));
+		$this->ArticlePage->acceptAllChangesToArticle($id);
 		return $this->save();
 	}
 
