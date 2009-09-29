@@ -33,7 +33,7 @@ foreach ($articlePages as $articlePage):
 			<?php echo $articlePage['ArticlePage']['content']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($articlePage['ArticlePage']['article_id'], array('controller' => 'articles', 'action' => 'view', $articlePage['ArticlePage']['article_id'])); ?>
+			<?php echo $html->link($articlePage['Article']['title'], array('controller' => 'articles', 'action' => 'view', $articlePage['ArticlePage']['article_id'])); ?>
 		</td>
 		<td class="actions">
 			<?php echo $html->link(__('View', true), array('action'=>'view', $articlePage['ArticlePage']['id'])); ?>

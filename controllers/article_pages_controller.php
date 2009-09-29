@@ -15,8 +15,13 @@ class ArticlePagesController extends AppController {
 			$this->redirect(array('action'=>'index'));
 		}
 		$this->ArticlePage->showDraft = true;
-		$this->set('articlePage', $this->ArticlePage->read(null, $id));
-		$this->set('revisions', $this->ArticlePage->revisions());
+		$this->ArticlePage->contain(array('Article'));
+		$articlePage = $this->ArticlePage->read(null, $id);
+		if ($articlePage['ArticlePage']['page_number'] == 0) {
+			$this->redirect(array('controller' => 'articles', 'action' => 'view', $articlePage['ArticlePage']['article_id']));
+		}
+		$revisions = $this->ArticlePage->revisions();
+		$this->set(compact('articlePage','revisions'));
 	}
 
 	function add() {
@@ -33,8 +38,6 @@ class ArticlePagesController extends AppController {
 				$this->Session->setFlash(__('The ArticlePage could not be saved. Please, try again.', true));
 			}
 		}
-		$articles = $this->ArticlePage->Article->find('list');
-		$this->set(compact('articles'));
 	}
 
 	function edit($id = null) {
@@ -56,8 +59,6 @@ class ArticlePagesController extends AppController {
 		if (empty($this->data)) {
 			$this->data = $this->ArticlePage->read(null, $id);
 		}
-		$articles = $this->ArticlePage->Article->find('list');
-		$this->set(compact('articles'));
 	}
 
 	function delete($id = null) {
