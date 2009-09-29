@@ -99,7 +99,7 @@ class ArticlesController extends AppController {
 			$this->Session->setFlash(__('Invalid id for Article', true));
 			$this->redirect(array('action'=>'index'));
 		}
-		if ($this->Article->del($id)) {
+		if ($this->Article->delete($id)) {
 			$this->Session->setFlash(__('Article deleted', true));
 			$this->redirect(array('action'=>'index'));
 		}
