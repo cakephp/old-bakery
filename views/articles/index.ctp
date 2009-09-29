@@ -52,7 +52,7 @@ foreach ($articles as $article):
 			<?php echo $article['Article']['lang']; ?>
 		</td>
 		<td>
-			<?php echo $html->link($article['Category']['name'], array('controller'=> 'categories', 'action'=>'view', $article['Category']['id'])); ?>
+			<?php echo $html->link($article['Category']['name'], array('category_id' => $article['Category']['id'])); ?>
 		</td>
 		<td>
 			<?php echo $html->link($article['User']['username'], array('controller'=> 'users', 'action'=>'view', $article['User']['id'])); ?>
